@@ -414,7 +414,7 @@ $teacherInitials = $teacherInitials ?? ($_SESSION['current_teacher_initials'] ??
             </div>
         </div>
         <div class="term-dates">
-            This Term Ended On: <strong><?php echo $termEndDateFormatted; ?></strong> &nbsp; | &nbsp;
+            This Term Has Ended On: <strong><?php echo $termEndDateFormatted; ?></strong> &nbsp; | &nbsp;
             Next Term Begins On: <strong><?php echo $nextTermBeginDateFormatted; ?></strong>
         </div>
         <?php if ($isP4_P7): ?>
