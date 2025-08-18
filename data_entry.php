@@ -80,6 +80,28 @@ if(isset($_SESSION['report_data']) && !isset($_SESSION['last_processed_batch_id'
             // Or, more robustly, view_processed_data.php should be the main interaction point for a batch.
         }
 
+        // Display Duplicate LIN Warnings
+        if (isset($_SESSION['duplicate_lin_warnings']) && !empty($_SESSION['duplicate_lin_warnings'])) {
+            echo '<div class="alert alert-danger mt-3" role="alert">';
+            echo '<h4 class="alert-heading"><i class="fas fa-id-card-alt"></i> Critical Warning: Duplicate LINs Detected!</h4>';
+            echo '<p>The following Learner Identification Numbers (LINs) were found assigned to multiple different students in the uploaded file. To prevent data corruption, the LIN has been <strong>ignored</strong> for all affected students during this import. The system has relied on student names for identification instead. Please correct the LINs in your source file for future imports.</p>';
+            echo '<hr>';
+            echo '<ul>';
+            foreach ($_SESSION['duplicate_lin_warnings'] as $warning) {
+                echo '<li>';
+                echo '<strong>Duplicate LIN:</strong> ' . htmlspecialchars($warning['lin']);
+                echo '<ul>';
+                foreach ($warning['students'] as $studentName) {
+                    echo '<li><em>Assigned to student:</em> ' . htmlspecialchars($studentName) . '</li>';
+                }
+                echo '</ul>';
+                echo '</li>';
+            }
+            echo '</ul>';
+            echo '</div>';
+            unset($_SESSION['duplicate_lin_warnings']); // Clear after displaying
+        }
+
         // Display Potential Duplicates Notification
         if (isset($_SESSION['potential_duplicates_found']) && !empty($_SESSION['potential_duplicates_found'])) {
             echo '<div class="alert alert-warning mt-3" role="alert">';

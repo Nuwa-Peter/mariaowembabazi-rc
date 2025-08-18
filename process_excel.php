@@ -130,6 +130,46 @@ try {
     }
     // --- End Sheet Validation ---
 
+    // --- START PHASE 0: Pre-scan for Duplicate LINs within the file ---
+    $linToStudentNamesMap = [];
+    $allSheetsForPrescan = $spreadsheet->getSheetNames();
+    foreach ($allSheetsForPrescan as $sheetNameForPrescan) {
+        $normalizedSheetNameForCheck = strtolower(trim($sheetNameForPrescan));
+        if (!isset($sheetNameToInternalCodeMap[$normalizedSheetNameForCheck])) continue;
+        $subjectKeyForSheetCheck = $sheetNameToInternalCodeMap[$normalizedSheetNameForCheck];
+        if (!in_array($subjectKeyForSheetCheck, $expectedSubjectInternalKeys)) continue;
+
+        $sheetForPrescan = $spreadsheet->getSheetByName($sheetNameForPrescan);
+        $headerLINCheck = trim(strtoupper(strval($sheetForPrescan->getCell('A1')->getValue())));
+        $headerNameCheck = trim(strtoupper(strval($sheetForPrescan->getCell('B1')->getValue())));
+        if ($headerLINCheck !== 'LIN' || !in_array($headerNameCheck, ['NAMES/NAME', 'NAMES', 'NAME'])) continue;
+
+        for ($row = 2; $row <= $sheetForPrescan->getHighestDataRow(); $row++) {
+            $linForPrescan = trim(strval($sheetForPrescan->getCell('A' . $row)->getValue()));
+            $nameForPrescan = strtoupper(trim(strval($sheetForPrescan->getCell('B' . $row)->getValue())));
+
+            if (!empty($linForPrescan) && !empty($nameForPrescan)) {
+                if (!isset($linToStudentNamesMap[$linForPrescan])) {
+                    $linToStudentNamesMap[$linForPrescan] = [];
+                }
+                if (!in_array($nameForPrescan, $linToStudentNamesMap[$linForPrescan])) {
+                    $linToStudentNamesMap[$linForPrescan][] = $nameForPrescan;
+                }
+            }
+        }
+    }
+
+    $duplicateLinsFoundInFile = [];
+    $_SESSION['duplicate_lin_warnings'] = [];
+    foreach ($linToStudentNamesMap as $lin => $names) {
+        if (count($names) > 1) {
+            $duplicateLinsFoundInFile[] = $lin;
+            $_SESSION['duplicate_lin_warnings'][] = ['lin' => $lin, 'students' => $names];
+        }
+    }
+    // --- END PHASE 0 ---
+
+
     // --- START PHASE 1: Pre-processing for consistency checks ---
     $allStudentsDataFromFile = []; // Key: 'NAME_LIN', Value: ['name_raw', 'name_caps', 'lin', 'sheets_present' => [], 'first_occurrence' => ['sheet', 'row']]
     $excelSheetNames = $spreadsheet->getSheetNames(); // Get all sheet names from the Excel file
@@ -412,6 +452,9 @@ try {
             if (empty($studentNameRaw)) continue; // Skip if no student name
             $studentNameAllCaps = strtoupper($studentNameRaw);
             $linToStore = !empty($linValue) ? $linValue : null;
+            if ($linToStore && !empty($duplicateLinsFoundInFile) && in_array($linToStore, $duplicateLinsFoundInFile)) {
+                $linToStore = null; // Neglect LIN if it was found to be a duplicate in the pre-scan
+            }
 
             $studentId = null;
             $studentInfo = null;
