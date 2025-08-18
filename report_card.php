@@ -98,8 +98,6 @@ $teacherInitials = $teacherInitials ?? ($_SESSION['current_teacher_initials'] ??
             position: relative;
             box-sizing: border-box;
             border: 1px solid #333; /* Added a solid border */
-            display: flex;
-            flex-direction: column;
         }
         /* .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.06; z-index: 0; pointer-events: none; width: 150mm; height: auto; } */
         .header { text-align: center; margin-bottom: 2.5mm; margin-top: 0; } /* Reduced margin-bottom */
@@ -172,6 +170,9 @@ $teacherInitials = $teacherInitials ?? ($_SESSION['current_teacher_initials'] ??
             display: flex; /* Added to allow vertical stacking of text and signature */
             flex-direction: column; /* Stack children vertically */
             /* justify-content: space-between; Pushes signature to bottom if remark is short - We'll control space differently now */
+        }
+        .remarks-section .remark-block:last-child {
+            margin-bottom: 0; /* Remove margin from the last remark block */
         }
         .remarks-section strong { display: block; margin-bottom: 0.5mm; font-weight: bold; font-size: 10pt; }
         .remarks-section p {
@@ -259,12 +260,12 @@ $teacherInitials = $teacherInitials ?? ($_SESSION['current_teacher_initials'] ??
         <!-- Ensure no img tag for watermark is here -->
         <div class="header">
             <div class="school-name"><?php echo htmlspecialchars("MARIA OW'EMBABAZI PRIMARY SCHOOL"); ?></div>
-            <div class="logo-container"><img src="images/logo.png" alt="School Logo" style="width: 35px !important; height: 35px !important; object-fit: contain;" onerror="this.style.display='none';"></div>
+            <div class="logo-container"><img src="images/logo.png" alt="School Logo" style="width: 25px !important; height: 25px !important; object-fit: contain;" onerror="this.style.display='none';"></div>
             <div class="school-details">P.O BOX 406, MBARARA</div>
             <div class="school-details">Tel. 0700172858 | Email: houseofnazareth.schools@gmail.com</div>
             <div class="report-title">TERMLY ACADEMIC REPORT</div>
         </div>
-        <div class="report-body-content" style="flex-grow: 1;"> <!-- Wrapper for main content -->
+        <div class="report-body-content"> <!-- Wrapper for main content -->
         <div class="student-details-block">
             <div class="student-info-grid">
                 <strong>STUDENT'S NAME:</strong> <span><?php echo $studentName; ?></span>
@@ -296,7 +297,7 @@ $teacherInitials = $teacherInitials ?? ($_SESSION['current_teacher_initials'] ??
                     <?php if (!$isP1_P3): ?><th>GRADE</th><?php endif; ?>
                     <th>M.O.T (100)</th>
                     <?php if (!$isP1_P3): ?><th>GRADE</th><?php endif; ?>
-                    <th>END OF TERM (100)</th>
+                    <th>E.O.T (100)</th>
                     <?php if (!$isP1_P3): ?><th>GRADE</th><?php endif; ?>
                     <?php if ($isP1_P3): ?><th>AVERAGE</th><?php endif; ?>
                     <th>REMARKS</th>
