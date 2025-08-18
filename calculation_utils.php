@@ -47,8 +47,8 @@ if (!function_exists('calculateP4P7_BOT_OverallPerformanceUtil')) {
         $division = 'Ungraded';
         if ($aggregatePoints >= 35 && $aggregatePoints <= 36) $division = 'U';
         else if ($aggregatePoints >= 30 && $aggregatePoints <= 34) $division = 'IV';
-        else if ($aggregatePoints >= 24 && $aggregatePoints <= 29) $division = 'III';
-        else if ($aggregatePoints >= 13 && $aggregatePoints <= 23) $division = 'II';
+        else if ($aggregatePoints >= 25 && $aggregatePoints <= 29) $division = 'III';
+        else if ($aggregatePoints >= 13 && $aggregatePoints <= 24) $division = 'II';
         else if ($aggregatePoints >= 4 && $aggregatePoints <= 12) $division = 'I';
 
         return ['p4p7_aggregate_bot_score' => $aggregatePoints, 'p4p7_division_bot' => $division];
@@ -85,8 +85,8 @@ if (!function_exists('calculateP4P7_MOT_OverallPerformanceUtil')) {
         $division = 'Ungraded';
         if ($aggregatePoints >= 35 && $aggregatePoints <= 36) $division = 'U';
         else if ($aggregatePoints >= 30 && $aggregatePoints <= 34) $division = 'IV';
-        else if ($aggregatePoints >= 24 && $aggregatePoints <= 29) $division = 'III';
-        else if ($aggregatePoints >= 13 && $aggregatePoints <= 23) $division = 'II';
+        else if ($aggregatePoints >= 25 && $aggregatePoints <= 29) $division = 'III';
+        else if ($aggregatePoints >= 13 && $aggregatePoints <= 24) $division = 'II';
         else if ($aggregatePoints >= 4 && $aggregatePoints <= 12) $division = 'I';
 
         return ['p4p7_aggregate_mot_score' => $aggregatePoints, 'p4p7_division_mot' => $division];
@@ -144,25 +144,21 @@ if (!function_exists('calculateP4P7OverallPerformanceUtil')) {
         $division = 'Ungraded';
         if ($aggregatePoints >= 35 && $aggregatePoints <= 36) $division = 'U'; // MODIFIED
         else if ($aggregatePoints >= 30 && $aggregatePoints <= 34) $division = 'IV'; // MODIFIED
-        else if ($aggregatePoints >= 24 && $aggregatePoints <= 29) $division = 'III'; // MODIFIED
-        else if ($aggregatePoints >= 13 && $aggregatePoints <= 23) $division = 'II'; // MODIFIED
+        else if ($aggregatePoints >= 25 && $aggregatePoints <= 29) $division = 'III'; // MODIFIED
+        else if ($aggregatePoints >= 13 && $aggregatePoints <= 24) $division = 'II'; // MODIFIED
         else if ($aggregatePoints >= 4 && $aggregatePoints <= 12) $division = 'I'; // MODIFIED
 
         // New rule: Adjust division if English or Maths has grade F9
         $eng_grade = $studentCoreSubjectsDataWithScores['english']['eot_grade'] ?? null;
         $mtc_grade = $studentCoreSubjectsDataWithScores['mtc']['eot_grade'] ?? null;
 
-        if (($eng_grade === 'F9' || $mtc_grade === 'F9') && $division !== 'X' && $division !== 'Ungraded') {
+        // F9 rule now only applies to Division I and II, as per user request.
+        if (($eng_grade === 'F9' || $mtc_grade === 'F9') && ($division === 'I' || $division === 'II')) {
             if ($division === 'I') {
                 $division = 'II';
             } elseif ($division === 'II') {
                 $division = 'III';
-            } elseif ($division === 'III') {
-                $division = 'IV';
-            } elseif ($division === 'IV') {
-                $division = 'U';
             }
-            // If division is already U, it remains U.
         }
 
         return ['p4p7_aggregate_points' => $aggregatePoints, 'p4p7_division' => $division];
