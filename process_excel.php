@@ -40,6 +40,7 @@ $_SESSION['flagged_duplicates_this_run'] = [];
 // For new consistency checks
 $_SESSION['missing_students_warnings'] = [];
 $_SESSION['fuzzy_match_warnings'] = [];
+$_SESSION['no_marks_warnings'] = []; // For students with no marks in a sheet
 $_SESSION['processed_for_fuzzy_check'] = []; // Stores names from current file for fuzzy check
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -585,6 +586,15 @@ try {
             $botScore = $currentSheetObject->getCell('C' . $row)->getValue();
             $motScore = $currentSheetObject->getCell('D' . $row)->getValue();
             $eotScore = $currentSheetObject->getCell('E' . $row)->getValue();
+
+            // New check: Notify if name exists but all scores are empty for this subject
+            if (empty(trim($botScore)) && empty(trim($motScore)) && empty(trim($eotScore))) {
+                $_SESSION['no_marks_warnings'][] = [
+                    'name' => $studentNameRaw,
+                    'sheet' => $sheetName,
+                    'row' => $row
+                ];
+            }
 
             // Insert/Update scores
             $sqlScore = "INSERT INTO scores (student_id, subject_id, report_batch_id, bot_score, mot_score, eot_score)

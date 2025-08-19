@@ -168,6 +168,23 @@ if(isset($_SESSION['report_data']) && !isset($_SESSION['last_processed_batch_id'
             // Session variable will be unset by view_processed_data.php or on next upload.
         }
 
+        // Display "No Marks" Warnings
+        if (isset($_SESSION['no_marks_warnings']) && !empty($_SESSION['no_marks_warnings'])) {
+            echo '<div class="alert alert-info mt-3" role="alert">';
+            echo '<h4 class="alert-heading"><i class="fas fa-edit"></i> Entries with No Marks Found</h4>';
+            echo '<p>The following students were listed in a subject sheet but had no marks entered for BOT, MOT, or EOT. These have been recorded as "N/A". Please review and edit them if marks were intended.</p>';
+            echo '<hr>';
+            echo '<ul>';
+            foreach ($_SESSION['no_marks_warnings'] as $warning) {
+                echo '<li>';
+                echo '<strong>Student:</strong> ' . htmlspecialchars($warning['name']) . ' in sheet \''. htmlspecialchars($warning['sheet']) . '\' at row ' . htmlspecialchars($warning['row']) .'.';
+                echo '</li>';
+            }
+            echo '</ul>';
+            echo '</div>';
+            unset($_SESSION['no_marks_warnings']); // Clear after displaying
+        }
+
         // Display "Fuzzy Name Match" Warnings
         if (isset($_SESSION['fuzzy_match_warnings']) && !empty($_SESSION['fuzzy_match_warnings'])) {
             echo '<div class="alert alert-secondary mt-3" role="alert">'; // Using alert-secondary for potential typos
