@@ -40,7 +40,7 @@ if (!function_exists('calculateP4P7_BOT_OverallPerformanceUtil')) {
             }
         }
 
-        if (!$validCoreBOTScoresExist && $coreBOTMissingOrInvalidCount === count($coreSubjectKeys)) {
+        if ($coreBOTMissingOrInvalidCount > 0) {
             return ['p4p7_aggregate_bot_score' => 0, 'p4p7_division_bot' => 'X'];
         }
 
@@ -78,7 +78,7 @@ if (!function_exists('calculateP4P7_MOT_OverallPerformanceUtil')) {
             }
         }
 
-        if (!$validCoreMOTScoresExist && $coreMOTMissingOrInvalidCount === count($coreSubjectKeys)) {
+        if ($coreMOTMissingOrInvalidCount > 0) {
             return ['p4p7_aggregate_mot_score' => 0, 'p4p7_division_mot' => 'X'];
         }
 
