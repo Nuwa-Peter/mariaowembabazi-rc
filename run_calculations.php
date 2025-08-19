@@ -184,14 +184,16 @@ try {
             // For remarks, EOT performance is primary
             $studentPerformanceInputForOverallRemarks = $p4p7_eot_results;
         } elseif ($isP1_P3) {
+            $totalSubjectsForClass = count($expectedSubjectKeysForClass); // Get total number of subjects
+
             $summaryDataForDB['p1p3_total_bot_score'] = $p1p3StudentTotalBot;
-            $summaryDataForDB['p1p3_average_bot_score'] = ($p1p3SubjectsWithBot > 0) ? round($p1p3StudentTotalBot / $p1p3SubjectsWithBot, 2) : 0; // NEW
+            $summaryDataForDB['p1p3_average_bot_score'] = ($totalSubjectsForClass > 0) ? round($p1p3StudentTotalBot / $totalSubjectsForClass, 2) : 0;
 
             $summaryDataForDB['p1p3_total_mot_score'] = $p1p3StudentTotalMot;
-            $summaryDataForDB['p1p3_average_mot_score'] = ($p1p3SubjectsWithMot > 0) ? round($p1p3StudentTotalMot / $p1p3SubjectsWithMot, 2) : 0; // NEW
+            $summaryDataForDB['p1p3_average_mot_score'] = ($totalSubjectsForClass > 0) ? round($p1p3StudentTotalMot / $totalSubjectsForClass, 2) : 0;
 
             $summaryDataForDB['p1p3_total_eot_score'] = $p1p3StudentTotalEotForAvgAndRank;
-            $avgEotP1P3 = ($p1p3SubjectsWithEotForAvg > 0) ? round($p1p3StudentTotalEotForAvgAndRank / $p1p3SubjectsWithEotForAvg, 2) : 0;
+            $avgEotP1P3 = ($totalSubjectsForClass > 0) ? round($p1p3StudentTotalEotForAvgAndRank / $totalSubjectsForClass, 2) : 0;
             $summaryDataForDB['p1p3_average_eot_score'] = $avgEotP1P3;
 
             // Populate for remarks (average EOT is primary for P1-P3 remarks)
