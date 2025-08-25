@@ -53,7 +53,13 @@ if (empty($studentIdsInBatch)) {
     exit;
 }
 
-$teacherInitials = $_SESSION['current_teacher_initials'] ?? [];
+// Load teacher initials from the batch settings in the database
+$teacherInitials = isset($batchSettingsData['teacher_initials']) ? json_decode($batchSettingsData['teacher_initials'], true) : [];
+if (json_last_error() !== JSON_ERROR_NONE) {
+    // Handle potential JSON decoding error, e.g., log it or default to an empty array
+    error_log("JSON Decode Error for teacher_initials in generate_pdf.php for batch_id: " . $batch_id);
+    $teacherInitials = [];
+}
 
 $classNameForBatch = $batchSettingsData['class_name'];
 $isP4_P7_batch = in_array($classNameForBatch, ['P4', 'P5', 'P6', 'P7']);

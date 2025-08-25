@@ -344,15 +344,15 @@ try {
 
     if ($reportBatchId) {
         error_log("PROCESS_EXCEL_BATCH_ACTION: Existing batch found (ID: $reportBatchId). Deleting old scores/summaries."); // Log action for existing batch
-        $stmtUpdateBatch = $pdo->prepare("UPDATE report_batch_settings SET term_end_date = :term_end, next_term_begin_date = :next_term_begin, import_date = CURRENT_TIMESTAMP WHERE id = :id");
-        $stmtUpdateBatch->execute([':term_end' => $termEndDate, ':next_term_begin' => $nextTermBeginDate, ':id' => $reportBatchId]);
+        $stmtUpdateBatch = $pdo->prepare("UPDATE report_batch_settings SET term_end_date = :term_end, next_term_begin_date = :next_term_begin, teacher_initials = :initials, import_date = CURRENT_TIMESTAMP WHERE id = :id");
+        $stmtUpdateBatch->execute([':term_end' => $termEndDate, ':next_term_begin' => $nextTermBeginDate, ':initials' => json_encode($teacherInitialsFromForm), ':id' => $reportBatchId]);
         $stmtDeleteOldScores = $pdo->prepare("DELETE FROM scores WHERE report_batch_id = :batch_id");
         $stmtDeleteOldScores->execute([':batch_id' => $reportBatchId]);
         $stmtDeleteOldSummaries = $pdo->prepare("DELETE FROM student_report_summary WHERE report_batch_id = :batch_id");
         $stmtDeleteOldSummaries->execute([':batch_id' => $reportBatchId]);
     } else {
-        $stmtInsertBatch = $pdo->prepare("INSERT INTO report_batch_settings (academic_year_id, term_id, class_id, term_end_date, next_term_begin_date) VALUES (:year_id, :term_id, :class_id, :term_end, :next_term_begin)");
-        $stmtInsertBatch->execute([':year_id' => $academicYearId, ':term_id' => $termId, ':class_id' => $classId, ':term_end' => $termEndDate, ':next_term_begin' => $nextTermBeginDate]);
+        $stmtInsertBatch = $pdo->prepare("INSERT INTO report_batch_settings (academic_year_id, term_id, class_id, term_end_date, next_term_begin_date, teacher_initials) VALUES (:year_id, :term_id, :class_id, :term_end, :next_term_begin, :initials)");
+        $stmtInsertBatch->execute([':year_id' => $academicYearId, ':term_id' => $termId, ':class_id' => $classId, ':term_end' => $termEndDate, ':next_term_begin' => $nextTermBeginDate, ':initials' => json_encode($teacherInitialsFromForm)]);
         $reportBatchId = $pdo->lastInsertId();
     }
 
