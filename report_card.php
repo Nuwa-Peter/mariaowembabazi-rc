@@ -1,4 +1,19 @@
 <?php
+// Helper function to format position numbers with ordinal suffixes (1st, 2nd, 3rd)
+if (!function_exists('format_ordinal')) {
+    function format_ordinal($number) {
+        if (!is_numeric($number) || $number < 1) {
+            return $number; // Return original value if not a positive number
+        }
+        $ends = ['th','st','nd','rd','th','th','th','th','th','th'];
+        if ((($number % 100) >= 11) && (($number % 100) <= 13)) {
+            return $number . 'th';
+        } else {
+            return $number . $ends[$number % 10];
+        }
+    }
+}
+
 // report_card.php - Template for generating student report cards
 // EXPECTS variables: $pdo, $batch_id, $student_id, $currentStudentEnrichedData,
 // $teacherInitials, $subjectDisplayNames,
@@ -284,7 +299,7 @@ $teacherInitials = $teacherInitials ?? ($_SESSION['current_teacher_initials'] ??
         </div>
         <?php elseif ($isP1_P3): ?>
         <div class="academic-summary-grid">
-            <strong>POSITION (EOT):</strong> <span><?php echo $p1p3PositionTotalEot; ?> out of <?php echo $totalStudentsInClassForP1P3; ?></span>
+            <strong>POSITION (EOT):</strong> <span><?php echo format_ordinal($p1p3PositionTotalEot); ?> out of <?php echo $totalStudentsInClassForP1P3; ?></span>
             <span></span>
         </div>
         <?php endif; ?>
@@ -347,11 +362,11 @@ $teacherInitials = $teacherInitials ?? ($_SESSION['current_teacher_initials'] ??
                     </tr>
                     <tr class="summary-row">
                         <td><strong>POSITION</strong></td>
-                        <td><strong><?php echo $p1p3PositionTotalBot; ?></strong></td>
+                        <td><strong><?php echo format_ordinal($p1p3PositionTotalBot); ?></strong></td>
                         <?php // No Grade column for P1-P3 ?>
-                        <td><strong><?php echo $p1p3PositionTotalMot; ?></strong></td>
+                        <td><strong><?php echo format_ordinal($p1p3PositionTotalMot); ?></strong></td>
                         <?php // No Grade column for P1-P3 ?>
-                        <td><strong><?php echo $p1p3PositionTotalEot; ?></strong></td>
+                        <td><strong><?php echo format_ordinal($p1p3PositionTotalEot); ?></strong></td>
                         <?php // No Grade column for P1-P3 ?>
                         <td></td> <?php // Empty cell for Subject Term Average column ?>
                         <td colspan="2"></td>
