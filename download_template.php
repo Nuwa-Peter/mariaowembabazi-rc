@@ -95,7 +95,10 @@ try {
     $subjects = [];
     $filename = "";
 
-    if ($templateType === 'lower') {
+    if ($templateType === 'nursery') {
+        $subjects = ['Language Development', 'Mathematical Concepts', 'Language Development II', 'Health Habits', 'Social Development'];
+        $filename = "Nursery_Section_Marks_Template_" . date('Y-m-d') . ".xlsx";
+    } elseif ($templateType === 'lower') {
         $subjects = ['English', 'Maths', 'Literacy One', 'Literacy Two', 'Local Language', 'Religious Education'];
         $filename = "Lower_Primary_Marks_Template_" . date('Y-m-d') . ".xlsx";
     } elseif ($templateType === 'upper') {
@@ -104,7 +107,7 @@ try {
     } else {
         if (ob_get_length()) ob_end_clean();
         header("Content-Type: text/plain; charset=UTF-8");
-        die("Invalid template type specified. Use type=lower or type=upper.");
+        die("Invalid template type specified. Use type=nursery, type=lower, or type=upper.");
     }
 
     $spreadsheet = new Spreadsheet();

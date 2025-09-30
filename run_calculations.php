@@ -22,6 +22,8 @@ if (!$batchSettings) {
 
 $isP4_P7 = in_array($batchSettings['class_name'], ['P4', 'P5', 'P6', 'P7']);
 $isP1_P3 = in_array($batchSettings['class_name'], ['P1', 'P2', 'P3']);
+$nurseryClasses = ['Baby Class', 'Middle Class', 'Top Class'];
+$isNursery = in_array($batchSettings['class_name'], $nurseryClasses);
 
 $coreSubjectKeysP4_P7 = [];
 $p1p3SubjectKeys = [];
@@ -33,6 +35,8 @@ if ($isP4_P7) {
 } elseif ($isP1_P3) {
     $p1p3SubjectKeys = ['english', 'mtc', 're', 'lit1', 'lit2', 'local_lang'];
     $expectedSubjectKeysForClass = $p1p3SubjectKeys;
+} elseif ($isNursery) {
+    $expectedSubjectKeysForClass = ['language_development', 'mathematical_concepts', 'language_development_2', 'health_habits', 'social_development'];
 }
 
 $gradingScalePointsMap = ['D1'=>1, 'D2'=>2, 'C3'=>3, 'C4'=>4, 'C5'=>5, 'C6'=>6, 'P7'=>7, 'P8'=>8, 'F9'=>9, 'N/A'=>0];
@@ -198,6 +202,20 @@ try {
 
             // Populate for remarks (average EOT is primary for P1-P3 remarks)
             $studentPerformanceInputForOverallRemarks['p1p3_average_eot_score'] = $avgEotP1P3;
+        } elseif ($isNursery) {
+            $nurseryStudentTotalEot = 0;
+            $nurserySubjectsWithEot = 0;
+            foreach($currentStudentSubjectsEnriched as $subjectData) {
+                if (is_numeric($subjectData['eot_score'])) {
+                    $nurseryStudentTotalEot += (float)$subjectData['eot_score'];
+                    $nurserySubjectsWithEot++;
+                }
+            }
+            $avgEotNursery = ($nurserySubjectsWithEot > 0) ? round($nurseryStudentTotalEot / $nurserySubjectsWithEot, 2) : 0;
+
+            // Re-use the P1-P3 average key for remark generation
+            $studentPerformanceInputForOverallRemarks['p1p3_average_eot_score'] = $avgEotNursery;
+            $summaryDataForDB['p1p3_average_eot_score'] = $avgEotNursery; // Save average for reference
         }
 
         $summaryDataForDB['auto_classteachers_remark_text'] = generateClassTeacherRemarkUtil($studentPerformanceInputForOverallRemarks, $isP4_P7);

@@ -55,6 +55,7 @@ $yearValue = htmlspecialchars($_POST['year'] ?? '');
 $termValue = htmlspecialchars($_POST['term'] ?? '');
 $termEndDate = htmlspecialchars($_POST['term_end_date'] ?? '');
 $nextTermBeginDate = htmlspecialchars($_POST['next_term_begin_date'] ?? '');
+$nurserySpecificData = $_POST['nursery_specific'] ?? [];
 $teacherInitialsFromForm = $_POST['teacher_initials'] ?? [];
 
 if (empty($selectedClassValue) || empty($yearValue) || empty($termValue) || empty($termEndDate) || empty($nextTermBeginDate)) {
@@ -66,6 +67,8 @@ if (empty($selectedClassValue) || empty($yearValue) || empty($termValue) || empt
 
 $isP4_P7 = in_array($selectedClassValue, ['P4', 'P5', 'P6', 'P7']);
 $isP1_P3 = in_array($selectedClassValue, ['P1', 'P2', 'P3']);
+$nurseryClasses = ['Baby Class', 'Middle Class', 'Top Class'];
+$isNursery = in_array($selectedClassValue, $nurseryClasses);
 $expectedSubjectInternalKeys = []; // These are the internal codes like 'mtc', 'lit1'
 $requiredSubjectInternalKeys = [];
 
@@ -79,7 +82,12 @@ $sheetNameToInternalCodeMap = [
     'religious education' => 're',
     'science' => 'science',
     'sst' => 'sst',
-    'kiswahili' => 'kiswahili'
+    'kiswahili' => 'kiswahili',
+    'language development' => 'language_development',
+    'mathematical concepts' => 'mathematical_concepts',
+    'language development ii' => 'language_development_2',
+    'health habits' => 'health_habits',
+    'social development' => 'social_development'
 ];
 
 if ($isP4_P7) {
@@ -92,6 +100,9 @@ if ($isP4_P7) {
     // Internal codes: english, mtc, re, lit1, lit2, local_lang
     $expectedSubjectInternalKeys = ['english', 'mtc', 're', 'lit1', 'lit2', 'local_lang'];
     $requiredSubjectInternalKeys = $expectedSubjectInternalKeys; // All are required for P1-P3
+} elseif ($isNursery) {
+    $expectedSubjectInternalKeys = ['language_development', 'mathematical_concepts', 'language_development_2', 'health_habits', 'social_development'];
+    $requiredSubjectInternalKeys = $expectedSubjectInternalKeys;
 } else {
     if (headers_sent()) { die('Invalid class selection and headers already sent.'); }
     $_SESSION['error_message'] = 'Invalid class selected: ' . htmlspecialchars($selectedClassValue);
@@ -344,15 +355,37 @@ try {
 
     if ($reportBatchId) {
         error_log("PROCESS_EXCEL_BATCH_ACTION: Existing batch found (ID: $reportBatchId). Deleting old scores/summaries."); // Log action for existing batch
-        $stmtUpdateBatch = $pdo->prepare("UPDATE report_batch_settings SET term_end_date = :term_end, next_term_begin_date = :next_term_begin, teacher_initials = :initials, import_date = CURRENT_TIMESTAMP WHERE id = :id");
-        $stmtUpdateBatch->execute([':term_end' => $termEndDate, ':next_term_begin' => $nextTermBeginDate, ':initials' => json_encode($teacherInitialsFromForm), ':id' => $reportBatchId]);
+        $stmtUpdateBatch = $pdo->prepare("UPDATE report_batch_settings SET term_end_date = :term_end, next_term_begin_date = :next_term_begin, teacher_initials = :initials, import_date = CURRENT_TIMESTAMP, nursery_school_fees = :nursery_school_fees, nursery_coloured_pencils = :nursery_coloured_pencils, nursery_toilet_papers = :nursery_toilet_papers, nursery_books = :nursery_books, nursery_pencils = :nursery_pencils WHERE id = :id");
+        $stmtUpdateBatch->execute([
+            ':term_end' => $termEndDate,
+            ':next_term_begin' => $nextTermBeginDate,
+            ':id' => $reportBatchId,
+            ':initials' => json_encode($teacherInitialsFromForm),
+            ':nursery_school_fees' => $nurserySpecificData['school_fees'] ?? null,
+            ':nursery_coloured_pencils' => $nurserySpecificData['coloured_pencils'] ?? null,
+            ':nursery_toilet_papers' => $nurserySpecificData['toilet_papers'] ?? null,
+            ':nursery_books' => $nurserySpecificData['books'] ?? null,
+            ':nursery_pencils' => $nurserySpecificData['pencils'] ?? null
+        ]);
         $stmtDeleteOldScores = $pdo->prepare("DELETE FROM scores WHERE report_batch_id = :batch_id");
         $stmtDeleteOldScores->execute([':batch_id' => $reportBatchId]);
         $stmtDeleteOldSummaries = $pdo->prepare("DELETE FROM student_report_summary WHERE report_batch_id = :batch_id");
         $stmtDeleteOldSummaries->execute([':batch_id' => $reportBatchId]);
     } else {
-        $stmtInsertBatch = $pdo->prepare("INSERT INTO report_batch_settings (academic_year_id, term_id, class_id, term_end_date, next_term_begin_date, teacher_initials) VALUES (:year_id, :term_id, :class_id, :term_end, :next_term_begin, :initials)");
-        $stmtInsertBatch->execute([':year_id' => $academicYearId, ':term_id' => $termId, ':class_id' => $classId, ':term_end' => $termEndDate, ':next_term_begin' => $nextTermBeginDate, ':initials' => json_encode($teacherInitialsFromForm)]);
+        $stmtInsertBatch = $pdo->prepare("INSERT INTO report_batch_settings (academic_year_id, term_id, class_id, term_end_date, next_term_begin_date, teacher_initials, nursery_school_fees, nursery_coloured_pencils, nursery_toilet_papers, nursery_books, nursery_pencils) VALUES (:year_id, :term_id, :class_id, :term_end, :next_term_begin, :initials, :nursery_school_fees, :nursery_coloured_pencils, :nursery_toilet_papers, :nursery_books, :nursery_pencils)");
+        $stmtInsertBatch->execute([
+            ':year_id' => $academicYearId,
+            ':term_id' => $termId,
+            ':class_id' => $classId,
+            ':term_end' => $termEndDate,
+            ':next_term_begin' => $nextTermBeginDate,
+            ':initials' => json_encode($teacherInitialsFromForm),
+            ':nursery_school_fees' => $nurserySpecificData['school_fees'] ?? null,
+            ':nursery_coloured_pencils' => $nurserySpecificData['coloured_pencils'] ?? null,
+            ':nursery_toilet_papers' => $nurserySpecificData['toilet_papers'] ?? null,
+            ':nursery_books' => $nurserySpecificData['books'] ?? null,
+            ':nursery_pencils' => $nurserySpecificData['pencils'] ?? null
+        ]);
         $reportBatchId = $pdo->lastInsertId();
     }
 

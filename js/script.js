@@ -36,10 +36,13 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function updateSubjectFields(selectedClass) {
-    // Selectors for the new teacher initial blocks
+    // Selectors for all relevant sections
     const commonSubjectInitials = document.querySelectorAll('.common-subject-initials');
     const p1p3SubjectInitials = document.querySelectorAll('.p1p3-subject-initials');
     const p4p7SubjectInitials = document.querySelectorAll('.p4p7-subject-initials');
+    const nurserySubjectInitials = document.querySelectorAll('.nursery-subject-initials');
+    const nurserySpecificFieldsCard = document.getElementById('nursery-specific-fields');
+
     const marksFileLabel = document.getElementById('marks_excel_file_label');
     const defaultMarksFileLabelText = "Marks Excel File (.xlsx):";
 
@@ -52,20 +55,15 @@ function updateSubjectFields(selectedClass) {
         }
     }
 
-    // Helper to set visibility and requirement for a group of teacher initial blocks
+    // Helper to set visibility and requirement for teacher initial fields
     function setInitialFields(elements, display, required) {
         elements.forEach(block => {
             block.style.display = display ? '' : 'none';
-            // Only target text inputs for teacher initials within these blocks
             const textInputs = block.querySelectorAll('input[type="text"]');
             textInputs.forEach(input => {
-                // Kiswahili initials are optional for P4-P7
+                // Special case for optional Kiswahili
                 if (input.id === 'kiswahili_initials') {
-                    if (selectedClass && selectedClass.startsWith('P') && parseInt(selectedClass.substring(1)) >= 4) { // P4-P7
-                        input.required = false;
-                    } else { // P1-P3 or no class selected (though it would be hidden)
-                         input.required = required && display;
-                    }
+                    input.required = false; // Always optional
                 } else {
                      input.required = required && display;
                 }
@@ -73,21 +71,48 @@ function updateSubjectFields(selectedClass) {
         });
     }
 
-    // The main file input is always visible and required, handled by HTML `required` attribute.
-    // This function now only controls the visibility and requirement of teacher initial fields.
+    // Helper for the nursery-specific info card
+    function setNurseryInfoCard(display, required) {
+        if (nurserySpecificFieldsCard) {
+            nurserySpecificFieldsCard.style.display = display ? '' : 'none';
+            const textInputs = nurserySpecificFieldsCard.querySelectorAll('input[type="text"]');
+            textInputs.forEach(input => {
+                // These fields are required when the section is visible
+                input.required = required && display;
+            });
+        }
+    }
 
-    if (selectedClass.startsWith('P1') || selectedClass.startsWith('P2') || selectedClass.startsWith('P3')) {
-        setInitialFields(commonSubjectInitials, true, true); // English, MTC initials
-        setInitialFields(p1p3SubjectInitials, true, true);   // RE, Lit1, Lit2, Local Lang initials
-        setInitialFields(p4p7SubjectInitials, false, false); // Science, SST, Kiswahili initials
-    } else if (selectedClass.startsWith('P4') || selectedClass.startsWith('P5') || selectedClass.startsWith('P6') || selectedClass.startsWith('P7')) {
-        setInitialFields(commonSubjectInitials, true, true); // English, MTC initials
-        setInitialFields(p1p3SubjectInitials, false, false);
-        setInitialFields(p4p7SubjectInitials, true, true);   // Science, SST, Kiswahili initials (Kiswahili requirement handled in setInitialFields)
-    } else { // No class selected or unknown class
-        setInitialFields(commonSubjectInitials, true, false); // Show common but don't require initially
+    const nurseryClasses = ['Baby Class', 'Middle Class', 'Top Class'];
+
+    if (nurseryClasses.includes(selectedClass)) {
+        // Nursery selected
+        setNurseryInfoCard(true, true);
+        setInitialFields(nurserySubjectInitials, true, true);
+        setInitialFields(commonSubjectInitials, false, false);
         setInitialFields(p1p3SubjectInitials, false, false);
         setInitialFields(p4p7SubjectInitials, false, false);
+    } else if (selectedClass.startsWith('P1') || selectedClass.startsWith('P2') || selectedClass.startsWith('P3')) {
+        // Lower Primary selected
+        setNurseryInfoCard(false, false);
+        setInitialFields(nurserySubjectInitials, false, false);
+        setInitialFields(commonSubjectInitials, true, true);
+        setInitialFields(p1p3SubjectInitials, true, true);
+        setInitialFields(p4p7SubjectInitials, false, false);
+    } else if (selectedClass.startsWith('P4') || selectedClass.startsWith('P5') || selectedClass.startsWith('P6') || selectedClass.startsWith('P7')) {
+        // Upper Primary selected
+        setNurseryInfoCard(false, false);
+        setInitialFields(nurserySubjectInitials, false, false);
+        setInitialFields(commonSubjectInitials, true, true);
+        setInitialFields(p1p3SubjectInitials, false, false);
+        setInitialFields(p4p7SubjectInitials, true, true);
+    } else {
+        // No class or unknown class selected
+        setNurseryInfoCard(false, false);
+        setInitialFields(nurserySubjectInitials, false, false);
+        setInitialFields(p1p3SubjectInitials, false, false);
+        setInitialFields(p4p7SubjectInitials, false, false);
+        setInitialFields(commonSubjectInitials, true, false); // Show common but don't require
     }
 }
 

@@ -20,6 +20,20 @@ require_once 'db_connection.php'; // Provides $pdo
 if (!file_exists('dal.php')) { die('CRITICAL ERROR: Data Access Layer file not found.'); }
 require_once 'dal.php'; // Provides DAL functions
 
+// Helper function for nursery grading
+if (!function_exists('getNurseryGradeAndRemark')) {
+    function getNurseryGradeAndRemark($score) {
+        if ($score === null || !is_numeric($score)) {
+            return ['grade' => 'N/A', 'remark' => 'N/A'];
+        }
+        if ($score >= 90) return ['grade' => 'A', 'remark' => 'Excellent'];
+        if ($score >= 80) return ['grade' => 'B', 'remark' => 'V.Good'];
+        if ($score >= 60) return ['grade' => 'C', 'remark' => 'Good'];
+        if ($score >= 40) return ['grade' => 'D', 'remark' => 'Fair'];
+        return ['grade' => 'E', 'remark' => 'Put more efforts'];
+    }
+}
+
 // --- Input Validation ---
 if (!isset($_GET['batch_id']) || !filter_var($_GET['batch_id'], FILTER_VALIDATE_INT) || $_GET['batch_id'] <= 0) {
     $_SESSION['error_message'] = 'Invalid or missing Batch ID for PDF generation.';
@@ -64,18 +78,28 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 $classNameForBatch = $batchSettingsData['class_name'];
 $isP4_P7_batch = in_array($classNameForBatch, ['P4', 'P5', 'P6', 'P7']);
 $isP1_P3_batch = in_array($classNameForBatch, ['P1', 'P2', 'P3']);
+$nurseryClasses = ['Baby Class', 'Middle Class', 'Top Class'];
+$isNursery_batch = in_array($classNameForBatch, $nurseryClasses);
+
 $expectedSubjectKeysForClass = [];
 if ($isP4_P7_batch) {
     $expectedSubjectKeysForClass = ['english', 'mtc', 'science', 'sst', 'kiswahili'];
 } elseif ($isP1_P3_batch) {
     $expectedSubjectKeysForClass = ['english', 'mtc', 're', 'lit1', 'lit2', 'local_lang'];
+} elseif ($isNursery_batch) {
+    $expectedSubjectKeysForClass = ['language_development', 'mathematical_concepts', 'language_development_2', 'health_habits', 'social_development'];
 }
 
 $subjectDisplayNames = [
     'english' => 'English', 'mtc' => 'Mathematics (MTC)', 'science' => 'Science',
     'sst' => 'Social Studies (SST)', 'kiswahili' => 'Kiswahili',
     're' => 'Religious Education (R.E)', 'lit1' => 'Literacy I',
-    'lit2' => 'Literacy II', 'local_lang' => 'Local Language'
+    'lit2' => 'Literacy II', 'local_lang' => 'Local Language',
+    'language_development' => 'Language Development',
+    'mathematical_concepts' => 'Mathematical Concepts',
+    'language_development_2' => 'Language Development II',
+    'health_habits' => 'Health Habits',
+    'social_development' => 'Social Development'
 ];
 $gradingScaleForP4P7Display = [
     'D1' => '90-100', 'D2' => '80-89', 'C3' => '70-79', 'C4' => '60-69',
@@ -94,7 +118,6 @@ try {
     // --- Watermark Settings ---
     $mpdf->SetWatermarkImage('images/logo.png', 0.04, 45, 'F'); // Opacity set to 0.04 (was 0.06), Size set to 45mm width
     $mpdf->showWatermarkImage = true;
-    // $mpdf->watermarkImageBehind = true; // This line was removed as it caused an error
 
     $pdfFileName = 'Report_Cards_' . preg_replace('/[^a-zA-Z0-9_-]/', '_', $batchSettingsData['class_name']) . '_' . preg_replace('/[^a-zA-Z0-9_-]/', '_', $batchSettingsData['term_name']) . '_' . $batchSettingsData['year_name'] . '.pdf';
     $mpdf->SetTitle('Report Cards - ' . $batchSettingsData['class_name'] . ' Term ' . $batchSettingsData['term_name'] . ' ' . $batchSettingsData['year_name']);
@@ -108,25 +131,6 @@ try {
 
         if (!$firstPage) {
             $mpdf->AddPage();
-
-            // Border drawing commands START (only if not first page)
-            $outerBorderX = 7; $outerBorderY = 7; $pageWidth = 210; $pageHeight = 297;
-            $outerBorderWidth = $pageWidth - (2 * $outerBorderX);
-            $outerBorderHeight = $pageHeight - (2 * $outerBorderY);
-            $gapBetweenBorders = 2;
-
-            $mpdf->SetDrawColor(0, 0, 0); // Black
-            $mpdf->SetLineWidth(0.8);    // Approx 2.25pt
-            $mpdf->Rect($outerBorderX, $outerBorderY, $outerBorderWidth, $outerBorderHeight, 'D');
-
-            $mpdf->SetLineWidth(0.2);    // Approx 0.57pt
-            $innerBorderX = $outerBorderX + $gapBetweenBorders;
-            $innerBorderY = $outerBorderY + $gapBetweenBorders;
-            $innerBorderWidth = $outerBorderWidth - (2 * $gapBetweenBorders);
-            $innerBorderHeight = $outerBorderHeight - (2 * $gapBetweenBorders);
-            $mpdf->Rect($innerBorderX, $innerBorderY, $innerBorderWidth, $innerBorderHeight, 'D');
-            $mpdf->SetLineWidth(0.2); // Reset
-            // Border drawing commands END
         }
         $firstPage = false; // This must be outside the if, to correctly manage $firstPage state for next iteration
 
@@ -136,13 +140,39 @@ try {
         }
         $currentStudentEnrichedData = $_SESSION[$sessionKeyForEnrichedData][$student_id];
 
-        // $pdo, $batch_id, $student_id are defined.
-        // $currentStudentEnrichedData is fetched.
-        // $teacherInitials, $subjectDisplayNames, $gradingScaleForP4P7Display, $expectedSubjectKeysForClass are defined.
-        // These are all the variables report_card.php expects.
-
         ob_start();
-        include 'report_card.php';
+        if ($isNursery_batch) {
+            // Prepare data for nursery_report_card.php
+            $studentData = [];
+            $studentData['student_name'] = $currentStudentEnrichedData['student_name'];
+            $studentData['class_teacher_remark'] = $currentStudentEnrichedData['auto_classteachers_remark_text'] ?? '';
+            $studentData['head_teacher_remark'] = $currentStudentEnrichedData['auto_headteachers_remark_text'] ?? '';
+            $studentData['subjects'] = [];
+
+            foreach ($expectedSubjectKeysForClass as $subjectKey) {
+                $eot_score = $currentStudentEnrichedData['subjects'][$subjectKey]['eot_score'] ?? null;
+                $gradeData = getNurseryGradeAndRemark($eot_score);
+                $studentData['subjects'][$subjectKey] = [
+                    'grade' => $gradeData['grade'],
+                    'remark' => $gradeData['remark']
+                ];
+            }
+
+            $batchSettings = $batchSettingsData;
+            $batchSettings['nursery_specific'] = [
+                'school_fees' => $batchSettingsData['nursery_school_fees'] ?? '',
+                'coloured_pencils' => $batchSettingsData['nursery_coloured_pencils'] ?? '',
+                'toilet_papers' => $batchSettingsData['nursery_toilet_papers'] ?? '',
+                'books' => $batchSettingsData['nursery_books'] ?? '',
+                'pencils' => $batchSettingsData['nursery_pencils'] ?? ''
+            ];
+            $batchSettings['next_term_begin_date'] = isset($batchSettingsData['next_term_begin_date']) ? date('d/m/Y', strtotime($batchSettingsData['next_term_begin_date'])) : '____________________';
+
+            include 'nursery_report_card.php';
+        } else {
+            // This is for P1-P7, existing logic
+            include 'report_card.php';
+        }
         $html = ob_get_clean();
         $mpdf->WriteHTML($html);
     }

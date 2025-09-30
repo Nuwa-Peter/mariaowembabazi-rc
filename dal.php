@@ -976,4 +976,143 @@ function getStudentScoresForBatchDetailed(PDO $pdo, int $studentId, int $batchId
     }
 }
 
+/**
+ * Gets the ID for a given year name, creating it if it doesn't exist.
+ * @param PDO $pdo
+ * @param string $yearName
+ * @return int|null
+ */
+function getOrCreateYearId(PDO $pdo, string $yearName): ?int {
+    $stmt = $pdo->prepare("SELECT id FROM academic_years WHERE year_name = :year_name");
+    $stmt->execute([':year_name' => $yearName]);
+    $id = $stmt->fetchColumn();
+    if ($id) {
+        return (int)$id;
+    }
+
+    $stmt = $pdo->prepare("INSERT INTO academic_years (year_name) VALUES (:year_name)");
+    if ($stmt->execute([':year_name' => $yearName])) {
+        return (int)$pdo->lastInsertId();
+    }
+    return null;
+}
+
+/**
+ * Gets the ID for a given term name, creating it if it doesn't exist.
+ * @param PDO $pdo
+ * @param string $termName
+ * @return int|null
+ */
+function getOrCreateTermId(PDO $pdo, string $termName): ?int {
+    $stmt = $pdo->prepare("SELECT id FROM terms WHERE term_name = :term_name");
+    $stmt->execute([':term_name' => $termName]);
+    $id = $stmt->fetchColumn();
+    if ($id) {
+        return (int)$id;
+    }
+
+    $stmt = $pdo->prepare("INSERT INTO terms (term_name) VALUES (:term_name)");
+    if ($stmt->execute([':term_name' => $termName])) {
+        return (int)$pdo->lastInsertId();
+    }
+    return null;
+}
+
+/**
+ * Gets the ID for a given class name, creating it if it doesn't exist.
+ * @param PDO $pdo
+ * @param string $className
+ * @return int|null
+ */
+function getOrCreateClassId(PDO $pdo, string $className): ?int {
+    $stmt = $pdo->prepare("SELECT id FROM classes WHERE class_name = :class_name");
+    $stmt->execute([':class_name' => $className]);
+    $id = $stmt->fetchColumn();
+    if ($id) {
+        return (int)$id;
+    }
+
+    $stmt = $pdo->prepare("INSERT INTO classes (class_name) VALUES (:class_name)");
+    if ($stmt->execute([':class_name' => $className])) {
+        return (int)$pdo->lastInsertId();
+    }
+    return null;
+}
+
+/**
+ * Creates or updates a report batch, returning its ID.
+ * Handles both regular and nursery-specific fields.
+ *
+ * @param PDO $pdo
+ * @param int $academicYearId
+ * @param int $termId
+ * @param int $classId
+ * @param string|null $termEndDate
+ * @param string|null $nextTermBeginDate
+ * @param array|null $nurserySpecificData Optional array of nursery-specific fields.
+ * @return int|null The ID of the created or updated batch, or null on failure.
+ */
+function createOrUpdateReportBatch(
+    PDO $pdo,
+    int $academicYearId,
+    int $termId,
+    int $classId,
+    ?string $termEndDate,
+    ?string $nextTermBeginDate,
+    ?array $nurserySpecificData = null
+): ?int {
+    $sql = "INSERT INTO report_batch_settings (
+                academic_year_id, term_id, class_id, term_end_date, next_term_begin_date,
+                nursery_school_fees, nursery_coloured_pencils, nursery_toilet_papers, nursery_books, nursery_pencils
+            ) VALUES (
+                :academic_year_id, :term_id, :class_id, :term_end_date, :next_term_begin_date,
+                :nursery_school_fees, :nursery_coloured_pencils, :nursery_toilet_papers, :nursery_books, :nursery_pencils
+            )
+            ON DUPLICATE KEY UPDATE
+                term_end_date = VALUES(term_end_date),
+                next_term_begin_date = VALUES(next_term_begin_date),
+                nursery_school_fees = VALUES(nursery_school_fees),
+                nursery_coloured_pencils = VALUES(nursery_coloured_pencils),
+                nursery_toilet_papers = VALUES(nursery_toilet_papers),
+                nursery_books = VALUES(nursery_books),
+                nursery_pencils = VALUES(nursery_pencils)";
+
+    $params = [
+        ':academic_year_id' => $academicYearId,
+        ':term_id' => $termId,
+        ':class_id' => $classId,
+        ':term_end_date' => $termEndDate,
+        ':next_term_begin_date' => $nextTermBeginDate,
+        ':nursery_school_fees' => $nurserySpecificData['school_fees'] ?? null,
+        ':nursery_coloured_pencils' => $nurserySpecificData['coloured_pencils'] ?? null,
+        ':nursery_toilet_papers' => $nurserySpecificData['toilet_papers'] ?? null,
+        ':nursery_books' => $nurserySpecificData['books'] ?? null,
+        ':nursery_pencils' => $nurserySpecificData['pencils'] ?? null,
+    ];
+
+    try {
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+
+        $batchId = $pdo->lastInsertId();
+        if ($batchId == 0) {
+            $selectSql = "SELECT id FROM report_batch_settings
+                          WHERE academic_year_id = :academic_year_id
+                          AND term_id = :term_id AND class_id = :class_id";
+            $selectStmt = $pdo->prepare($selectSql);
+            $selectStmt->execute([
+                ':academic_year_id' => $academicYearId,
+                ':term_id' => $termId,
+                ':class_id' => $classId,
+            ]);
+            $batchId = $selectStmt->fetchColumn();
+        }
+        return (int)$batchId;
+
+    } catch (PDOException $e) {
+        error_log("DAL Error: createOrUpdateReportBatch failed. Error: " . $e->getMessage());
+        return null;
+    }
+}
+
 ?>

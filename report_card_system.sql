@@ -113,7 +113,12 @@ CREATE TABLE `report_batch_settings` (
   `term_end_date` date DEFAULT NULL,
   `next_term_begin_date` date DEFAULT NULL,
   `import_date` timestamp NOT NULL DEFAULT current_timestamp(),
-  -- Add other settings like 'report_generation_status', 'principal_signature_url' if needed
+  `teacher_initials` text DEFAULT NULL COMMENT 'JSON-encoded teacher initials for the subjects in this batch',
+  `nursery_school_fees` varchar(255) DEFAULT NULL,
+  `nursery_coloured_pencils` varchar(255) DEFAULT NULL,
+  `nursery_toilet_papers` varchar(255) DEFAULT NULL,
+  `nursery_books` varchar(255) DEFAULT NULL,
+  `nursery_pencils` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_batch` (`academic_year_id`,`term_id`,`class_id`),
   KEY `term_id` (`term_id`),
