@@ -236,7 +236,6 @@ if(isset($_SESSION['report_data']) && !isset($_SESSION['last_processed_batch_id'
                             <i class="fas fa-file-excel"></i> Select Template to Download
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="downloadTemplateDropdown">
-                            <li><a class="dropdown-item" href="download_template.php?type=nursery"><i class="fas fa-baby"></i> Nursery Section</a></li>
                             <li><a class="dropdown-item" href="download_template.php?type=lower"><i class="fas fa-child"></i> Lower Primary (P1-P3)</a></li>
                             <li><a class="dropdown-item" href="download_template.php?type=upper"><i class="fas fa-user-graduate"></i> Upper Primary (P4-P7)</a></li>
                         </ul>
@@ -258,11 +257,6 @@ if(isset($_SESSION['report_data']) && !isset($_SESSION['last_processed_batch_id'
                             <label for="class_selection" class="form-label">Class:</label>
                     <select class="form-select" id="class_selection" name="class_selection" required>
                         <option value="" disabled selected>Select Class</option>
-                        <optgroup label="Nursery">
-                            <option value="Baby Class">Baby Class</option>
-                            <option value="Middle Class">Middle Class</option>
-                            <option value="Top Class">Top Class</option>
-                        </optgroup>
                         <optgroup label="Lower Primary">
                             <option value="P1">P1</option>
                             <option value="P2">P2</option>
@@ -305,38 +299,6 @@ if(isset($_SESSION['report_data']) && !isset($_SESSION['last_processed_batch_id'
             </div>
             </div></div> <!-- Close School & Term Info Card's card-body -->
             </div> <!-- Close School & Term Info Card -->
-
-            <div id="nursery-specific-fields" class="card mb-4" style="display:none;">
-                <h5 class="card-header card-header-custom">Nursery Specific Information</h5>
-                <div class="card-body">
-                    <div class="row mb-3 justify-content-center">
-                        <div class="col-md-4">
-                            <label for="school_fees" class="form-label">School Fees:</label>
-                            <input type="text" class="form-control" id="school_fees" name="nursery_specific[school_fees]" placeholder="e.g., 100000">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="coloured_pencils" class="form-label">Coloured Pencils:</label>
-                            <input type="text" class="form-control" id="coloured_pencils" name="nursery_specific[coloured_pencils]" placeholder="e.g., 1 packet">
-                        </div>
-                    </div>
-                    <div class="row mb-3 justify-content-center">
-                        <div class="col-md-4">
-                            <label for="toilet_papers" class="form-label">Toilet Papers:</label>
-                            <input type="text" class="form-control" id="toilet_papers" name="nursery_specific[toilet_papers]" placeholder="e.g., 5 rolls">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="books" class="form-label">Books:</label>
-                            <input type="text" class="form-control" id="books" name="nursery_specific[books]" placeholder="e.g., 12 books">
-                        </div>
-                    </div>
-                    <div class="row mb-3 justify-content-center">
-                        <div class="col-md-4">
-                            <label for="pencils" class="form-label">Pencils:</label>
-                            <input type="text" class="form-control" id="pencils" name="nursery_specific[pencils]" placeholder="e.g., 12 pencils">
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <div class="card mb-4">
                 <h5 class="card-header card-header-custom text-center">Upload Marks File & Teacher Initials</h5>
@@ -394,28 +356,6 @@ if(isset($_SESSION['report_data']) && !isset($_SESSION['last_processed_batch_id'
                     <div class="row mb-3 subject-initials-row p4p7-subject-initials justify-content-center" id="kiswahili-initials-block" style="display:none;">
                         <div class="col-md-4 text-end"><label for="kiswahili_initials" class="form-label">Kiswahili Teacher Initials:</label></div>
                         <div class="col-md-4"><input type="text" class="form-control" id="kiswahili_initials" name="teacher_initials[kiswahili]" placeholder="e.g., H.I." value="<?php echo htmlspecialchars($current_teacher_initials_for_session['kiswahili'] ?? ''); ?>"></div>
-                    </div>
-
-                    <!-- Nursery Specific Subject Initials -->
-                    <div class="row mb-2 subject-initials-row nursery-subject-initials justify-content-center" id="language_development-initials-block" style="display:none;">
-                        <div class="col-md-4 text-end"><label for="language_development_initials" class="form-label">Language Development Initials:</label></div>
-                        <div class="col-md-4"><input type="text" class="form-control" id="language_development_initials" name="teacher_initials[language_development]" placeholder="e.g., L.D."></div>
-                    </div>
-                    <div class="row mb-2 subject-initials-row nursery-subject-initials justify-content-center" id="mathematical_concepts-initials-block" style="display:none;">
-                        <div class="col-md-4 text-end"><label for="mathematical_concepts_initials" class="form-label">Mathematical Concepts Initials:</label></div>
-                        <div class="col-md-4"><input type="text" class="form-control" id="mathematical_concepts_initials" name="teacher_initials[mathematical_concepts]" placeholder="e.g., M.C."></div>
-                    </div>
-                    <div class="row mb-2 subject-initials-row nursery-subject-initials justify-content-center" id="language_development_2-initials-block" style="display:none;">
-                        <div class="col-md-4 text-end"><label for="language_development_2_initials" class="form-label">Language Development II Initials:</label></div>
-                        <div class="col-md-4"><input type="text" class="form-control" id="language_development_2_initials" name="teacher_initials[language_development_2]" placeholder="e.g., L.D.2"></div>
-                    </div>
-                    <div class="row mb-2 subject-initials-row nursery-subject-initials justify-content-center" id="health_habits-initials-block" style="display:none;">
-                        <div class="col-md-4 text-end"><label for="health_habits_initials" class="form-label">Health Habits Initials:</label></div>
-                        <div class="col-md-4"><input type="text" class="form-control" id="health_habits_initials" name="teacher_initials[health_habits]" placeholder="e.g., H.H."></div>
-                    </div>
-                    <div class="row mb-2 subject-initials-row nursery-subject-initials justify-content-center" id="social_development-initials-block" style="display:none;">
-                        <div class="col-md-4 text-end"><label for="social_development_initials" class="form-label">Social Development Initials:</label></div>
-                        <div class="col-md-4"><input type="text" class="form-control" id="social_development_initials" name="teacher_initials[social_development]" placeholder="e.g., S.D."></div>
                     </div>
                 </div>
             </div> <!-- Close Unified File Upload & Initials Card's card-body -->

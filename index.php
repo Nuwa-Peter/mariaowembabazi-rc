@@ -243,7 +243,10 @@ try {
                 </ul>
             </li>
             <li>
-                <a href="data_entry.php"><i class="fas fa-edit"></i> Marks Entry</a> <!-- Was "Generate New Reports" -->
+                <a href="data_entry.php"><i class="fas fa-edit"></i> Primary Marks Entry</a>
+            </li>
+            <li>
+                <a href="nursery_data_entry.php"><i class="fas fa-baby"></i> Nursery Marks Entry</a>
             </li>
             <li>
                 <a href="view_report_archives.php"><i class="fas fa-archive"></i> View Report Archives</a> <!-- New page, replaces old "View Processed Data" & "Report Archives" submenu -->
