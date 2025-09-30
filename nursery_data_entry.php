@@ -68,8 +68,17 @@ $current_teacher_initials_for_session = $_SESSION['current_teacher_initials'] ??
             <div class="card mb-4">
                 <h5 class="card-header card-header-custom text-center">Download Nursery Marks Entry Template</h5>
                 <div class="card-body text-center">
-                    <p class="text-muted mb-3">Download the Excel template for the Nursery section. The template contains sheets for each learning area.</p>
-                    <a href="download_template.php?type=nursery" class="btn btn-primary"><i class="fas fa-file-excel"></i> Download Nursery Template</a>
+                    <p class="text-muted mb-3">Download the Excel template for the specific Nursery class level.</p>
+                    <div class="dropdown d-inline-block">
+                        <button class="btn btn-primary dropdown-toggle" type="button" id="downloadNurseryTemplateDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-file-excel"></i> Select Template to Download
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="downloadNurseryTemplateDropdown">
+                            <li><a class="dropdown-item" href="download_template.php?type=nursery_baby">Baby Class Template</a></li>
+                            <li><a class="dropdown-item" href="download_template.php?type=nursery_middle">Middle Class Template</a></li>
+                            <li><a class="dropdown-item" href="download_template.php?type=nursery_top">Top Class Template</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div></div>

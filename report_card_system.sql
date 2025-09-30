@@ -48,7 +48,7 @@ CREATE TABLE `terms` (
 DROP TABLE IF EXISTS `subjects`;
 CREATE TABLE `subjects` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `subject_code` varchar(20) NOT NULL COMMENT 'e.g., mtc, eng, sst',
+  `subject_code` varchar(50) NOT NULL COMMENT 'e.g., mtc, eng, sst, mathematical_concepts',
   `subject_name_full` varchar(100) NOT NULL COMMENT 'e.g., Mathematics, English Language',
   -- Add other relevant fields like 'department' or 'is_core_subject' if they exist
   PRIMARY KEY (`id`),

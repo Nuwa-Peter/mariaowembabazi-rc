@@ -235,6 +235,14 @@ try {
                 <a href="#templateSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fas fa-file-excel"></i> Download Template</a>
                 <ul class="collapse list-unstyled" id="templateSubmenu">
                     <li>
+                        <a href="#nurseryTemplateSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle" style="padding-left: 30px;"><i class="fas fa-baby fa-fw me-2"></i>Nursery Section</a>
+                        <ul class="collapse list-unstyled" id="nurseryTemplateSubmenu">
+                            <li><a href="download_template.php?type=nursery_baby" style="padding-left: 50px;">Baby Class</a></li>
+                            <li><a href="download_template.php?type=nursery_middle" style="padding-left: 50px;">Middle Class</a></li>
+                            <li><a href="download_template.php?type=nursery_top" style="padding-left: 50px;">Top Class</a></li>
+                        </ul>
+                    </li>
+                    <li>
                         <a href="download_template.php?type=lower" style="padding-left: 30px;"><i class="fas fa-child fa-fw me-2"></i>Lower Primary</a>
                     </li>
                     <li>
