@@ -100,7 +100,7 @@ $teacherInitials = $teacherInitials ?? ($_SESSION['current_teacher_initials'] ??
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Report Card - <?php echo $studentName; ?></title>
-    <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="icon" type="image/png" href="/v19/images/logo.png">
     <style>
         body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; margin: 0; padding: 0; background-color: #f0f0f0; font-size: 9.5pt; color: #000; }
         .report-card-container {
@@ -275,7 +275,11 @@ $teacherInitials = $teacherInitials ?? ($_SESSION['current_teacher_initials'] ??
         <!-- Ensure no img tag for watermark is here -->
         <div class="header">
             <div class="school-name"><?php echo htmlspecialchars("MARIA OW'EMBABAZI PRIMARY SCHOOL"); ?></div>
-            <div class="logo-container"><img src="images/logo.png" alt="School Logo" style="width: 25px !important; height: 25px !important; object-fit: contain;" onerror="this.style.display='none';"></div>
+            <div class="logo-container">
+                <?php if (!empty($logoBase64)): ?>
+                    <img src="<?php echo $logoBase64; ?>" alt="School Logo" style="width: 25px !important; height: 25px !important; object-fit: contain;">
+                <?php endif; ?>
+            </div>
             <div class="school-details">P.O BOX 406, MBARARA</div>
             <div class="school-details">Tel. 0700172858 | Email: houseofnazareth.schools@gmail.com</div>
             <div class="report-title">TERMLY ACADEMIC REPORT</div>
