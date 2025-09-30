@@ -288,4 +288,70 @@ if (!function_exists('generateHeadTeacherRemarkUtil')) {
     }
 }
 
+if (!function_exists('generateNurseryClassTeacherRemarkUtil')) {
+    function generateNurseryClassTeacherRemarkUtil($averageScore) {
+        if ($averageScore === null || !is_numeric($averageScore)) {
+            return "Performance could not be assessed as marks were not available. Please see the class teacher.";
+        }
+
+        if ($averageScore >= 90) {
+            return "An outstanding performance this term! The pupil has shown great enthusiasm for learning and grasps new concepts quickly. Keep up the wonderful work.";
+        } elseif ($averageScore >= 80) {
+            return "A very good performance. The pupil participates well in class activities and has a positive attitude towards learning. Continue this great effort.";
+        } elseif ($averageScore >= 60) {
+            return "A good and steady performance this term. The pupil is making good progress in all learning areas. Consistent effort will lead to even better results.";
+        } elseif ($averageScore >= 40) {
+            return "A fair result for the term. The pupil has the ability to achieve more with increased focus and participation in class. Let's work on building confidence.";
+        } else {
+            return "More effort is required across all learning areas. Please ensure all assignments are completed and encourage participation at home. I am here to help.";
+        }
+    }
+}
+
+if (!function_exists('generateNurseryHeadTeacherRemarkUtil')) {
+    function generateNurseryHeadTeacherRemarkUtil($averageScore) {
+        if ($averageScore === null || !is_numeric($averageScore)) {
+            return "The pupil's performance could not be determined. It is important to participate in all assessments.";
+        }
+
+        if ($averageScore >= 90) {
+            return "A truly excellent result. It is clear this pupil is a bright and engaged learner. We are very proud of this achievement.";
+        } elseif ($averageScore >= 80) {
+            return "This is a very strong performance. The pupil has demonstrated great potential. The school encourages this continued dedication.";
+        } elseif ($averageScore >= 60) {
+            return "A commendable effort this term. We are pleased with the progress being made. Keep up the good work.";
+        } elseif ($averageScore >= 40) {
+            return "There is potential for improvement. The school encourages more consistent application to studies next term.";
+        } else {
+            return "A significant improvement is needed next term. The school expects more dedication to learning activities. Please see the class teacher for support.";
+        }
+    }
+}
+
+if (!function_exists('getNurseryGradeFromScoreUtil')) {
+    function getNurseryGradeFromScoreUtil($score) {
+        if ($score === null || !is_numeric($score)) {
+            return 'N/A';
+        }
+        if ($score >= 90) return 'A';
+        if ($score >= 80) return 'B';
+        if ($score >= 60) return 'C';
+        if ($score >= 40) return 'D';
+        return 'E';
+    }
+}
+
+if (!function_exists('getNurserySubjectRemarkFromScoreUtil')) {
+    function getNurserySubjectRemarkFromScoreUtil($score) {
+        if ($score === null || !is_numeric($score)) {
+            return 'N/A';
+        }
+        if ($score >= 90) return 'Excellent';
+        if ($score >= 80) return 'V.Good';
+        if ($score >= 60) return 'Good';
+        if ($score >= 40) return 'Fair';
+        return 'Put more efforts';
+    }
+}
+
 ?>

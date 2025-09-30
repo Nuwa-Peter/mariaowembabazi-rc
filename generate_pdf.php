@@ -6,8 +6,6 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
-    // Optional: Set a flash message to explain why they are on the login page
-    // $_SESSION['login_error_message'] = "You must be logged in to access this page.";
     header('Location: login.php');
     exit;
 }
@@ -20,24 +18,13 @@ require_once 'db_connection.php'; // Provides $pdo
 if (!file_exists('dal.php')) { die('CRITICAL ERROR: Data Access Layer file not found.'); }
 require_once 'dal.php'; // Provides DAL functions
 
-// Helper function for nursery grading
-if (!function_exists('getNurseryGradeAndRemark')) {
-    function getNurseryGradeAndRemark($score) {
-        if ($score === null || !is_numeric($score)) {
-            return ['grade' => 'N/A', 'remark' => 'N/A'];
-        }
-        if ($score >= 90) return ['grade' => 'A', 'remark' => 'Excellent'];
-        if ($score >= 80) return ['grade' => 'B', 'remark' => 'V.Good'];
-        if ($score >= 60) return ['grade' => 'C', 'remark' => 'Good'];
-        if ($score >= 40) return ['grade' => 'D', 'remark' => 'Fair'];
-        return ['grade' => 'E', 'remark' => 'Put more efforts'];
-    }
-}
+// Define an absolute path for file system operations
+define('ABSOLUTE_PATH', __DIR__ . '/');
 
 // --- Input Validation ---
 if (!isset($_GET['batch_id']) || !filter_var($_GET['batch_id'], FILTER_VALIDATE_INT) || $_GET['batch_id'] <= 0) {
     $_SESSION['error_message'] = 'Invalid or missing Batch ID for PDF generation.';
-    header('Location: index.php'); // Redirect to dashboard or appropriate error page
+    header('Location: index.php');
     exit;
 }
 $batch_id = (int)$_GET['batch_id'];
@@ -52,11 +39,10 @@ if (isset($_GET['output_mode']) && strtoupper($_GET['output_mode']) === 'I') {
 $batchSettingsData = getReportBatchSettings($pdo, $batch_id);
 if (!$batchSettingsData) {
     $_SESSION['error_message'] = 'Could not find settings for Batch ID: ' . htmlspecialchars($batch_id);
-    header('Location: view_processed_data.php?batch_id=' . $batch_id); // Or dashboard
+    header('Location: view_processed_data.php?batch_id=' . $batch_id);
     exit;
 }
 
-// Student IDs for the batch (fetch from student_report_summary as it implies calculations are done)
 $stmtStudentIds = $pdo->prepare("SELECT student_id FROM student_report_summary WHERE report_batch_id = :batch_id ORDER BY student_id");
 $stmtStudentIds->execute([':batch_id' => $batch_id]);
 $studentIdsInBatch = $stmtStudentIds->fetchAll(PDO::FETCH_COLUMN);
@@ -67,10 +53,8 @@ if (empty($studentIdsInBatch)) {
     exit;
 }
 
-// Load teacher initials from the batch settings in the database
 $teacherInitials = isset($batchSettingsData['teacher_initials']) ? json_decode($batchSettingsData['teacher_initials'], true) : [];
 if (json_last_error() !== JSON_ERROR_NONE) {
-    // Handle potential JSON decoding error, e.g., log it or default to an empty array
     error_log("JSON Decode Error for teacher_initials in generate_pdf.php for batch_id: " . $batch_id);
     $teacherInitials = [];
 }
@@ -116,23 +100,39 @@ try {
     ]);
 
     // --- Watermark Settings ---
-    $mpdf->SetWatermarkImage('images/logo.png', 0.04, 45, 'F'); // Opacity set to 0.04 (was 0.06), Size set to 45mm width
-    $mpdf->showWatermarkImage = true;
+    $watermarkPath = ABSOLUTE_PATH . 'images/logo.png';
+    if (file_exists($watermarkPath)) {
+        $mpdf->SetWatermarkImage($watermarkPath, 0.04, 45, 'F');
+        $mpdf->showWatermarkImage = true;
+    } else {
+        error_log("Watermark image not found at: " . $watermarkPath);
+    }
+
+    // --- Prepare Base64 encoded logo for embedding in HTML ---
+    $logoPath = ABSOLUTE_PATH . 'images/logo.png';
+    $logoBase64 = '';
+    if (file_exists($logoPath)) {
+        $logoType = pathinfo($logoPath, PATHINFO_EXTENSION);
+        $logoData = file_get_contents($logoPath);
+        $logoBase64 = 'data:image/' . $logoType . ';base64,' . base64_encode($logoData);
+    } else {
+        error_log("Report card logo image not found at: " . $logoPath);
+    }
 
     $pdfFileName = 'Report_Cards_' . preg_replace('/[^a-zA-Z0-9_-]/', '_', $batchSettingsData['class_name']) . '_' . preg_replace('/[^a-zA-Z0-9_-]/', '_', $batchSettingsData['term_name']) . '_' . $batchSettingsData['year_name'] . '.pdf';
     $mpdf->SetTitle('Report Cards - ' . $batchSettingsData['class_name'] . ' Term ' . $batchSettingsData['term_name'] . ' ' . $batchSettingsData['year_name']);
     $mpdf->SetAuthor("MARIA OW'EMBABAZI PRIMARY SCHOOL");
     $mpdf->SetCreator('Report Card System');
 
-    $firstPage = true; // Initialize flag for first page handling
+    $firstPage = true;
 
     // --- Loop Through Students & Generate HTML for Each Report ---
-    foreach ($studentIdsInBatch as $student_id) { // $student_id is now correctly defined for use here
+    foreach ($studentIdsInBatch as $student_id) {
 
         if (!$firstPage) {
             $mpdf->AddPage();
         }
-        $firstPage = false; // This must be outside the if, to correctly manage $firstPage state for next iteration
+        $firstPage = false;
 
         $sessionKeyForEnrichedData = 'enriched_students_data_for_batch_' . $batch_id;
         if (!isset($_SESSION[$sessionKeyForEnrichedData][$student_id])) {
@@ -142,7 +142,6 @@ try {
 
         ob_start();
         if ($isNursery_batch) {
-            // Prepare data for nursery_report_card.php
             $studentData = [];
             $studentData['student_name'] = $currentStudentEnrichedData['student_name'];
             $studentData['class_teacher_remark'] = $currentStudentEnrichedData['auto_classteachers_remark_text'] ?? '';
@@ -150,11 +149,10 @@ try {
             $studentData['subjects'] = [];
 
             foreach ($expectedSubjectKeysForClass as $subjectKey) {
-                $eot_score = $currentStudentEnrichedData['subjects'][$subjectKey]['eot_score'] ?? null;
-                $gradeData = getNurseryGradeAndRemark($eot_score);
+                // Use the pre-calculated grade and remark from the enriched data
                 $studentData['subjects'][$subjectKey] = [
-                    'grade' => $gradeData['grade'],
-                    'remark' => $gradeData['remark']
+                    'grade' => $currentStudentEnrichedData['subjects'][$subjectKey]['eot_grade'] ?? 'N/A',
+                    'remark' => $currentStudentEnrichedData['subjects'][$subjectKey]['eot_remark'] ?? 'N/A'
                 ];
             }
 
@@ -166,21 +164,17 @@ try {
                 'books' => $batchSettingsData['nursery_books'] ?? '',
                 'pencils' => $batchSettingsData['nursery_pencils'] ?? ''
             ];
-            $batchSettings['next_term_begin_date'] = isset($batchSettingsData['next_term_begin_date']) ? date('d/m/Y', strtotime($batchSettingsData['next_term_begin_date'])) : '____________________';
+            $batchSettings['term_end_date_formatted'] = isset($batchSettingsData['term_end_date']) ? date('d/m/Y', strtotime($batchSettingsData['term_end_date'])) : '____________________';
+            $batchSettings['next_term_begin_date_formatted'] = isset($batchSettingsData['next_term_begin_date']) ? date('d/m/Y', strtotime($batchSettingsData['next_term_begin_date'])) : '____________________';
 
             include 'nursery_report_card.php';
         } else {
-            // This is for P1-P7, existing logic
             include 'report_card.php';
         }
         $html = ob_get_clean();
         $mpdf->WriteHTML($html);
     }
 
-    // Optional: Clear session data for this batch after PDF generation
-    // unset($_SESSION['enriched_students_data_for_batch_' . $batch_id]);
-
-    // Log successful PDF generation before outputting
     $logDescription = "Generated PDF report for batch '" . htmlspecialchars($batchSettingsData['class_name'] . " " . $batchSettingsData['term_name'] . " " . $batchSettingsData['year_name']) . "' (ID: " . $batch_id . ").";
     logActivity(
         $pdo,
@@ -196,7 +190,6 @@ try {
     exit;
 
 } catch (\Mpdf\MpdfException $e) {
-    // Ensure buffer is cleaned if mPDF exception occurs before output
     if (ob_get_level() > 0) ob_end_clean();
     $_SESSION['error_message'] = "mPDF Error generating PDF for Batch ID " . htmlspecialchars($batch_id) . ": " . $e->getMessage();
 } catch (Exception $e) {
@@ -205,7 +198,7 @@ try {
 }
 
 // If any error occurred and was caught, redirect back
-if(isset($_SESSION['error_message'])){ // Check if error message was set
+if(isset($_SESSION['error_message'])){
     header('Location: view_processed_data.php?batch_id=' . $batch_id);
     exit;
 }

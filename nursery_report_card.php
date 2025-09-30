@@ -80,6 +80,20 @@
         .info-section {
             margin-bottom: 10mm;
         }
+        .remarks-section {
+            border: 1px solid #000;
+            padding: 8px;
+            margin-bottom: 10mm;
+        }
+        .remarks-section p {
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+        }
+        .signature-line {
+            margin-top: 15px;
+            text-align: right;
+        }
         .info-section table {
             width: 100%;
         }
@@ -102,7 +116,9 @@
         <div class="header">
             <div class="school-name">MARIA OW'EMBABAZI PRIMARY SCHOOL</div>
             <div class="logo-container">
-                <img src="images/logo.png" alt="School Logo">
+                <?php if (!empty($logoBase64)): ?>
+                    <img src="<?php echo $logoBase64; ?>" alt="School Logo">
+                <?php endif; ?>
             </div>
             <div class="school-details">
                 P.O. BOX, 406<br>
@@ -156,19 +172,21 @@
         </table>
 
         <div class="info-section">
-            <table>
-                <tr>
-                    <td><strong>DAYS MISSED:</strong> ____________________</td>
-                </tr>
-                <tr>
-                    <td><strong>CLASS TEACHER'S REPORT:</strong> <?php echo htmlspecialchars($studentData['class_teacher_remark'] ?? '____________________'); ?></td>
-                    <td style="text-align: right;"><strong>SIGNATURE:</strong> _______________</td>
-                </tr>
-                <tr>
-                    <td><strong>HEADTEACHER'S REPORT:</strong> <?php echo htmlspecialchars($studentData['head_teacher_remark'] ?? '____________________'); ?></td>
-                    <td style="text-align: right;"><strong>SIGNATURE:</strong> _______________</td>
-                </tr>
-            </table>
+            <p><strong>DAYS MISSED:</strong> ____________________</p>
+        </div>
+
+        <div class="remarks-section">
+            <p><strong>CLASS TEACHER'S REPORT:</strong> <?php echo nl2br(htmlspecialchars($studentData['class_teacher_remark'] ?? '____________________')); ?></p>
+            <div class="signature-line">
+                <strong>SIGNATURE:</strong> ............................................
+            </div>
+        </div>
+
+        <div class="remarks-section">
+            <p><strong>HEADTEACHER'S REPORT:</strong> <?php echo nl2br(htmlspecialchars($studentData['head_teacher_remark'] ?? '____________________')); ?></p>
+            <div class="signature-line">
+                <strong>SIGNATURE:</strong> ............................................
+            </div>
         </div>
 
         <div class="info-section">
@@ -191,7 +209,8 @@
         <div class="info-section">
              <table>
                 <tr>
-                    <td><strong>NEXT TERM BEGINS ON:</strong> <?php echo htmlspecialchars($batchSettings['next_term_begin_date'] ?? '____________________'); ?></td>
+                    <td><strong>THIS TERM ENDED ON:</strong> <?php echo htmlspecialchars($batchSettings['term_end_date_formatted'] ?? '____________________'); ?></td>
+                    <td><strong>NEXT TERM BEGINS ON:</strong> <?php echo htmlspecialchars($batchSettings['next_term_begin_date_formatted'] ?? '____________________'); ?></td>
                 </tr>
              </table>
         </div>

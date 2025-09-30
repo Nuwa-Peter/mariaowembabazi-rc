@@ -96,17 +96,29 @@ try {
             $motScore = $subjectScores['mot_score'] ?? 'N/A';
             $eotScore = $subjectScores['eot_score'] ?? 'N/A';
 
-            $currentStudentSubjectsEnriched[$subjectKey] = [
-                'subject_name_full' => $subjectScores['subject_name_full'] ?? ucfirst($subjectKey),
-                'bot_score' => $botScore,
-                'bot_grade' => getGradeFromScoreUtil($botScore),
-                'mot_score' => $motScore,
-                'mot_grade' => getGradeFromScoreUtil($motScore),
-                'eot_score' => $eotScore,
-                'eot_grade' => getGradeFromScoreUtil($eotScore),
-                'eot_remark' => getSubjectEOTRemarkUtil($eotScore, $remarksScoreMap), // Calculated remark
-                'eot_points' => ($isP4_P7) ? getPointsFromGradeUtil(getGradeFromScoreUtil($eotScore), $gradingScalePointsMap) : null
-            ];
+            if ($isNursery) {
+                $currentStudentSubjectsEnriched[$subjectKey] = [
+                    'subject_name_full' => $subjectScores['subject_name_full'] ?? ucfirst($subjectKey),
+                    'bot_score' => $botScore,
+                    'mot_score' => $motScore,
+                    'eot_score' => $eotScore,
+                    'eot_grade' => getNurseryGradeFromScoreUtil($eotScore), // Use nursery-specific function
+                    'eot_remark' => getNurserySubjectRemarkFromScoreUtil($eotScore), // Use nursery-specific function for simple remarks
+                    'eot_points' => null // No points for nursery
+                ];
+            } else {
+                $currentStudentSubjectsEnriched[$subjectKey] = [
+                    'subject_name_full' => $subjectScores['subject_name_full'] ?? ucfirst($subjectKey),
+                    'bot_score' => $botScore,
+                    'bot_grade' => getGradeFromScoreUtil($botScore),
+                    'mot_score' => $motScore,
+                    'mot_grade' => getGradeFromScoreUtil($motScore),
+                    'eot_score' => $eotScore,
+                    'eot_grade' => getGradeFromScoreUtil($eotScore),
+                    'eot_remark' => getSubjectEOTRemarkUtil($eotScore, $remarksScoreMap), // Calculated remark
+                    'eot_points' => ($isP4_P7) ? getPointsFromGradeUtil(getGradeFromScoreUtil($eotScore), $gradingScalePointsMap) : null
+                ];
+            }
 
             // Save the calculated eot_remark to the scores table
             $remarkToSave = $currentStudentSubjectsEnriched[$subjectKey]['eot_remark'];
@@ -218,8 +230,14 @@ try {
             $summaryDataForDB['p1p3_average_eot_score'] = $avgEotNursery; // Save average for reference
         }
 
-        $summaryDataForDB['auto_classteachers_remark_text'] = generateClassTeacherRemarkUtil($studentPerformanceInputForOverallRemarks, $isP4_P7);
-        $summaryDataForDB['auto_headteachers_remark_text'] = generateHeadTeacherRemarkUtil($studentPerformanceInputForOverallRemarks, $isP4_P7);
+        if ($isNursery) {
+            $avgEotNursery = $studentPerformanceInputForOverallRemarks['p1p3_average_eot_score'] ?? null;
+            $summaryDataForDB['auto_classteachers_remark_text'] = generateNurseryClassTeacherRemarkUtil($avgEotNursery);
+            $summaryDataForDB['auto_headteachers_remark_text'] = generateNurseryHeadTeacherRemarkUtil($avgEotNursery);
+        } else {
+            $summaryDataForDB['auto_classteachers_remark_text'] = generateClassTeacherRemarkUtil($studentPerformanceInputForOverallRemarks, $isP4_P7);
+            $summaryDataForDB['auto_headteachers_remark_text'] = generateHeadTeacherRemarkUtil($studentPerformanceInputForOverallRemarks, $isP4_P7);
+        }
 
         $processedStudentsSummaryData[$studentId] = $summaryDataForDB;
     }
