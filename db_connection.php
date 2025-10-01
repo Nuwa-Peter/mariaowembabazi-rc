@@ -1,5 +1,11 @@
 <?php
-require_once 'config.php'; // Include the global configuration
+// Define the base path for assets. If the application is in a subdirectory,
+// this should be updated. e.g., '/my_app_subdir'. An empty string assumes
+// the application is at the root of the domain.
+if (!defined('BASE_PATH')) {
+    define('BASE_PATH', '');
+}
+
 // Database connection details - REPLACE WITH YOUR ACTUAL CREDENTIALS
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'report_card_system'); // Choose your database name

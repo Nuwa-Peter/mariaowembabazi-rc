@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php'; // Include the global configuration
+require_once 'db_connection.php'; // Provides BASE_PATH and other constants
 // Start session if not already started
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
