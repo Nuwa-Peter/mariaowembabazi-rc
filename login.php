@@ -1,4 +1,5 @@
 <?php
+require_once 'config.php'; // Include the global configuration
 session_start();
 $error_message = $_SESSION['login_error_message'] ?? null;
 unset($_SESSION['login_error_message']); // Clear error after displaying

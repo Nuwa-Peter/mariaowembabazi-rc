@@ -1,4 +1,5 @@
 <?php
+require_once 'config.php'; // Include the global configuration
 session_start();
 require_once 'db_connection.php';
 

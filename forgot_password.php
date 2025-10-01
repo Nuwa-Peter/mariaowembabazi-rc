@@ -1,4 +1,5 @@
 <?php
+require_once 'config.php'; // Include the global configuration
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
