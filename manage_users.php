@@ -68,7 +68,7 @@ $pageUsername = $_SESSION['username'] ?? 'User'; // For navbar display
     <title><?php echo htmlspecialchars($pageTitle); ?> - Maria Ow'embabazi P/S</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link rel="icon" type="image/png" href="/images/logo.png">
+    <link rel="icon" type="image/png" href="<?php echo BASE_PATH; ?>/images/logo.png">
     <link href="css/style.css" rel="stylesheet"> <!-- Assuming a general style.css -->
     <style>
         body { background-color: #e0f7fa; }
@@ -86,7 +86,7 @@ $pageUsername = $_SESSION['username'] ?? 'User'; // For navbar display
     <nav class="navbar navbar-light bg-light sticky-top shadow-sm">
         <div class="container-fluid">
             <a class="navbar-brand" href="index.php">
-                <img src="/images/logo.png" alt="Logo" width="30" height="30" class="d-inline-block align-text-top me-2" onerror="this.style.display='none';">
+                <img src="<?php echo BASE_PATH; ?>/images/logo.png" alt="Logo" width="30" height="30" class="d-inline-block align-text-top me-2">
                 Maria Ow'embabazi P/S - Report System
             </a>
             <!-- User Dropdown (similar to index.php but might show different options or just logout) -->

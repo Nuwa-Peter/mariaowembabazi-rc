@@ -1,4 +1,5 @@
 <?php
+require_once 'config.php'; // Include the global configuration
 // session_check.php for web pages
 
 require_once 'session_utils.php';

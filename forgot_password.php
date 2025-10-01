@@ -12,7 +12,7 @@ if (session_status() === PHP_SESSION_NONE) {
     <title>Forgot Password - Report System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link rel="icon" type="image/png" href="/images/logo.png">
+    <link rel="icon" type="image/png" href="<?php echo BASE_PATH; ?>/images/logo.png">
     <style>
         body { background-color: #e0f7fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         .forgot-password-container { background-color: #fff; padding: 30px 40px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.15); width: 100%; max-width: 500px; }

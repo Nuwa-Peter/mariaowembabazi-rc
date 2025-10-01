@@ -101,7 +101,7 @@ if (isset($_SESSION['processed_for_fuzzy_check'])) unset($_SESSION['processed_fo
     <title>View Processed Batch Data - <?php echo htmlspecialchars($batchSettings['class_name']); ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link rel="icon" type="image/png" href="/images/logo.png">
+    <link rel="icon" type="image/png" href="<?php echo BASE_PATH; ?>/images/logo.png">
     <link href="css/style.css" rel="stylesheet">
     <style>
         body { background-color: #e0f7fa; }
@@ -179,7 +179,7 @@ if (isset($_SESSION['processed_for_fuzzy_check'])) unset($_SESSION['processed_fo
     <nav class="navbar navbar-light bg-light sticky-top shadow-sm">
         <div class="container-fluid">
             <a class="navbar-brand" href="index.php"> <!-- Corrected -->
-                <img src="/images/logo.png" alt="Logo" width="30" height="30" class="d-inline-block align-text-top me-2" onerror="this.style.display='none';">
+                <img src="<?php echo BASE_PATH; ?>/images/logo.png" alt="Logo" width="30" height="30" class="d-inline-block align-text-top me-2">
                 Maria Owembabazi P/S - Report System
             </a>
             <div>

@@ -8,7 +8,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nursery Report Card - <?php echo htmlspecialchars($studentData['student_name'] ?? 'Student'); ?></title>
-    <link rel="icon" type="image/png" href="/images/logo.png">
+    <link rel="icon" type="image/png" href="<?php echo BASE_PATH; ?>/images/logo.png">
     <style>
         body {
             font-family: 'Times New Roman', Times, serif;

@@ -20,7 +20,7 @@ if (isset($_SESSION['user_id'])) {
     <title>Login - Report System - Maria Ow'embabazi P/S</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link rel="icon" type="image/png" href="/images/logo.png">
+    <link rel="icon" type="image/png" href="<?php echo BASE_PATH; ?>/images/logo.png">
     <style>
         body {
             background-color: #e0f7fa; /* Light blue background */
@@ -74,7 +74,7 @@ if (isset($_SESSION['user_id'])) {
 <body>
     <div class="login-container">
         <div class="login-header">
-            <img src="/images/logo.png" alt="School Logo" onerror="this.style.display='none';">
+            <img src="<?php echo BASE_PATH; ?>/images/logo.png" alt="School Logo">
             <h2>School Report System</h2>
             <p class="text-muted">Please sign in to continue</p>
         </div>

@@ -94,7 +94,7 @@ try {
     <title>Report System Dashboard - Maria Ow'embabazi P/S</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"> <!-- Font Awesome for icons -->
-    <link rel="icon" type="image/png" href="/images/logo.png">
+    <link rel="icon" type="image/png" href="<?php echo BASE_PATH; ?>/images/logo.png">
     <style>
         body {
             background-color: #e0f7fa; /* Sky blue theme - light cyan */
@@ -221,7 +221,7 @@ try {
     <!-- Sidebar -->
     <nav id="sidebar">
         <div class="sidebar-header">
-            <img src="/images/logo.png" alt="School Logo" onerror="this.style.display='none';">
+            <img src="<?php echo BASE_PATH; ?>/images/logo.png" alt="School Logo">
             <h5>Maria Ow'embabazi P/S</h5>
             <p class="datetime-display"><?php echo date("D, d M Y H:i"); ?></p>
         </div>
