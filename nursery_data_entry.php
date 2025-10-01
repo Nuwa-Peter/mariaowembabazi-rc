@@ -12,7 +12,7 @@ $current_teacher_initials_for_session = $_SESSION['current_teacher_initials'] ??
     <title>Nursery Data Entry - Maria Ow'embabazi Primary School</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link rel="icon" type="image/png" href="/v19/images/logo.png">
+    <link rel="icon" type="image/png" href="/images/logo.png">
     <link href="css/style.css" rel="stylesheet">
     <style>
         body { background-color: #e0f7fa; }
@@ -36,7 +36,7 @@ $current_teacher_initials_for_session = $_SESSION['current_teacher_initials'] ??
     <nav class="navbar navbar-light bg-light sticky-top shadow-sm">
         <div class="container-fluid">
             <a class="navbar-brand" href="index.php">
-                <img src="/v19/images/logo.png" alt="Logo" width="30" height="30" class="d-inline-block align-text-top me-2">
+                <img src="/images/logo.png" alt="Logo" width="30" height="30" class="d-inline-block align-text-top me-2">
                 Maria Ow'embabazi P/S - Report System
             </a>
             <div>

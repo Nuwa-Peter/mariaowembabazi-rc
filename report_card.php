@@ -100,7 +100,7 @@ $teacherInitials = $teacherInitials ?? ($_SESSION['current_teacher_initials'] ??
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Report Card - <?php echo $studentName; ?></title>
-    <link rel="icon" type="image/png" href="/v19/images/logo.png">
+    <link rel="icon" type="image/png" href="/images/logo.png">
     <style>
         body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; margin: 0; padding: 0; background-color: #f0f0f0; font-size: 9.5pt; color: #000; }
         .report-card-container {
@@ -114,7 +114,7 @@ $teacherInitials = $teacherInitials ?? ($_SESSION['current_teacher_initials'] ??
             box-sizing: border-box;
             border: 1px solid #333; /* Added a solid border */
         }
-        /* .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.06; z-index: 0; pointer-events: none; width: 150mm; height: auto; } */
+        .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.06; z-index: 0; pointer-events: none; width: 150mm; height: auto; }
         .header { text-align: center; margin-bottom: 2.5mm; margin-top: 0; } /* Reduced margin-bottom */
         .header .school-name { font-size: 20pt; font-weight: bold; margin: 0; color: #000; letter-spacing: 0.5px; }
         .header .logo-container { margin-top: 1mm; margin-bottom: 1mm; } /* Reduced margins */
@@ -272,7 +272,9 @@ $teacherInitials = $teacherInitials ?? ($_SESSION['current_teacher_initials'] ??
 </head>
 <body>
     <div class="report-card-container">
-        <!-- Ensure no img tag for watermark is here -->
+        <?php if (!empty($logoBase64)): ?>
+            <img src="<?php echo $logoBase64; ?>" class="watermark" alt="Watermark">
+        <?php endif; ?>
         <div class="header">
             <div class="school-name"><?php echo htmlspecialchars("MARIA OW'EMBABAZI PRIMARY SCHOOL"); ?></div>
             <div class="logo-container">

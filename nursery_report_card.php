@@ -8,7 +8,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nursery Report Card - <?php echo htmlspecialchars($studentData['student_name'] ?? 'Student'); ?></title>
-    <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="icon" type="image/png" href="/images/logo.png">
     <style>
         body {
             font-family: 'Times New Roman', Times, serif;
@@ -26,6 +26,17 @@
             border: 1px solid #000;
             position: relative;
             box-sizing: border-box;
+        }
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.06;
+            z-index: 0;
+            pointer-events: none;
+            width: 150mm;
+            height: auto;
         }
         .header {
             text-align: center;
@@ -113,6 +124,9 @@
 </head>
 <body>
     <div class="report-card-container">
+        <?php if (!empty($logoBase64)): ?>
+            <img src="<?php echo $logoBase64; ?>" class="watermark" alt="Watermark">
+        <?php endif; ?>
         <div class="header">
             <div class="school-name">MARIA OW'EMBABAZI PRIMARY SCHOOL</div>
             <div class="logo-container">
