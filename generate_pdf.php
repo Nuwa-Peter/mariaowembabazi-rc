@@ -99,14 +99,6 @@ try {
         'default_font' => 'helvetica'
     ]);
 
-    // --- Watermark Settings ---
-    $watermarkPath = ABSOLUTE_PATH . 'images/logo.png';
-    if (file_exists($watermarkPath)) {
-        $mpdf->SetWatermarkImage($watermarkPath, 0.04, 45, 'F');
-        $mpdf->showWatermarkImage = true;
-    } else {
-        error_log("Watermark image not found at: " . $watermarkPath);
-    }
 
     // --- Prepare Base64 encoded logo for embedding in HTML ---
     $logoPath = ABSOLUTE_PATH . 'images/logo.png';

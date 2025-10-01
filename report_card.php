@@ -114,7 +114,7 @@ $teacherInitials = $teacherInitials ?? ($_SESSION['current_teacher_initials'] ??
             box-sizing: border-box;
             border: 1px solid #333; /* Added a solid border */
         }
-        .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.06; z-index: 0; pointer-events: none; width: 150mm; height: auto; }
+        .watermark { position: fixed; top: 10mm; right: 10mm; width: 60mm; height: auto; opacity: 0.1; z-index: -1; }
         .header { text-align: center; margin-bottom: 2.5mm; margin-top: 0; } /* Reduced margin-bottom */
         .header .school-name { font-size: 20pt; font-weight: bold; margin: 0; color: #000; letter-spacing: 0.5px; }
         .header .logo-container { margin-top: 1mm; margin-bottom: 1mm; } /* Reduced margins */

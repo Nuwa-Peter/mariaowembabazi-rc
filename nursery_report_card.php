@@ -28,15 +28,13 @@
             box-sizing: border-box;
         }
         .watermark {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            opacity: 0.06;
-            z-index: 0;
-            pointer-events: none;
-            width: 150mm;
+            position: fixed;
+            top: 10mm;
+            right: 10mm;
+            width: 60mm;
             height: auto;
+            opacity: 0.1;
+            z-index: -1;
         }
         .header {
             text-align: center;
