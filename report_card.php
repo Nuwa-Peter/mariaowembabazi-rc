@@ -114,7 +114,6 @@ $teacherInitials = $teacherInitials ?? ($_SESSION['current_teacher_initials'] ??
             box-sizing: border-box;
             border: 1px solid #333; /* Added a solid border */
         }
-        .watermark { position: fixed; top: 10mm; right: 10mm; width: 60mm; height: auto; opacity: 0.1; z-index: -1; }
         .header { text-align: center; margin-bottom: 2.5mm; margin-top: 0; } /* Reduced margin-bottom */
         .header .school-name { font-size: 20pt; font-weight: bold; margin: 0; color: #000; letter-spacing: 0.5px; }
         .header .logo-container { margin-top: 1mm; margin-bottom: 1mm; } /* Reduced margins */
@@ -272,9 +271,6 @@ $teacherInitials = $teacherInitials ?? ($_SESSION['current_teacher_initials'] ??
 </head>
 <body>
     <div class="report-card-container">
-        <?php if (!empty($logoBase64)): ?>
-            <img src="<?php echo $logoBase64; ?>" class="watermark" alt="Watermark">
-        <?php endif; ?>
         <div class="header">
             <div class="school-name"><?php echo htmlspecialchars("MARIA OW'EMBABAZI PRIMARY SCHOOL"); ?></div>
             <div class="logo-container">

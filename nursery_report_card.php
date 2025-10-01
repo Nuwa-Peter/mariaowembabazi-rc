@@ -27,15 +27,6 @@
             position: relative;
             box-sizing: border-box;
         }
-        .watermark {
-            position: fixed;
-            top: 10mm;
-            right: 10mm;
-            width: 60mm;
-            height: auto;
-            opacity: 0.1;
-            z-index: -1;
-        }
         .header {
             text-align: center;
             margin-bottom: 10mm;
@@ -122,9 +113,6 @@
 </head>
 <body>
     <div class="report-card-container">
-        <?php if (!empty($logoBase64)): ?>
-            <img src="<?php echo $logoBase64; ?>" class="watermark" alt="Watermark">
-        <?php endif; ?>
         <div class="header">
             <div class="school-name">MARIA OW'EMBABAZI PRIMARY SCHOOL</div>
             <div class="logo-container">
