@@ -1,4 +1,5 @@
 <?php
+require_once 'config.php'; // Include the global configuration
 // Database connection details - REPLACE WITH YOUR ACTUAL CREDENTIALS
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'report_card_system'); // Choose your database name
