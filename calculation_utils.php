@@ -177,35 +177,56 @@ if (!function_exists('generateClassTeacherRemarkUtil')) {
             $aggregate = $performanceData['p4p7_aggregate_points'] ?? 99; // Default to a high aggregate if not set
 
             if ($aggregate >= 4 && $aggregate <= 6) {
-                return "Excellent work this term! Keep up this outstanding effort.";
+                return "Excellent work. Keep it up.";
             } elseif ($aggregate >= 7 && $aggregate <= 9) {
-                return "Very good work! You have performed impressively well.";
+                return "Very good work! Keep it up.";
             } elseif ($aggregate >= 10 && $aggregate <= 12) {
-                return "Good work this term. A commendable achievement.";
+                return "Good work. Keep it up.";
             } elseif ($aggregate >= 13 && $aggregate <= 16) {
-                return "A good effort this term. Keep pushing yourself to achieve even more.";
+                return "A good effort. Focus on attaining first grade.";
             } elseif ($aggregate >= 17 && $aggregate <= 24) {
-                return "You are making progress. Continue to work hard and you will improve further.";
+                return "You have the potential to make it if you put in more effort.";
             } elseif ($aggregate >= 25 && $aggregate <= 29) {
-                return "There is room for improvement. Focus on your studies and seek help when needed.";
+                return "There is room for improvement.";
             } elseif ($aggregate >= 30 && $aggregate <= 34) {
-                return "You need to put in more effort in your studies. Consistent hard work is key.";
+                return "You need to put in more effort in your studies.";
             } elseif ($aggregate >= 35) { // Covers 35-36 and above (Division U or higher aggregates)
-                return "Please work harder next term to improve your performance.";
+                return "Please work harder next term for a better performance.";
             } else { // Should not be reached if aggregate is always >= 4 for graded students, but as a fallback.
                 $division = $performanceData['p4p7_division'] ?? 'X'; // Use division for X case
                 if ($division === 'X') {
-                    return "You missed some exams. It's important to do them to see how you are doing.";
+                    return "Avoid missing Exams.";
                 }
                 return "Please see your class teacher to discuss your performance."; // Generic fallback
             }
         } else { // P1-P3
-            $average = $performanceData['p1p3_average_eot_score'] ?? 0;
-            if ($average >= 85) return "Excellent work this term! You did wonderfully.";
-            if ($average >= 70) return "Very good job! Keep up the great work.";
-            if ($average >= 60) return "Good effort! Keep trying your best.";
-            if ($average >= 50) return "Nice try. Work a bit harder to do even better.";
-            return "Please try harder next term. Ask for help if you need it.";
+            $position = $performanceData['p1p3_position_in_class'] ?? 0;
+
+            if ($position > 0) {
+                if ($position <= 10) {
+                    return "Excellent work! Keep it up.";
+                } elseif ($position <= 20) {
+                    return "Very good work this term. Your position is impressive.";
+                } elseif ($position <= 30) {
+                    return "Good effort. Push for a better position next term.";
+                } elseif ($position <= 40) {
+                    return "A fair result. More focus can lead to improvement.";
+                } elseif ($position <= 50) {
+                    return "You can do better. Let's work together to improve.";
+                } elseif ($position <= 70) {
+                    return "More effort is needed to improve your position.";
+                } elseif ($position <= 80) {
+                    return "Your position needs improvement. Hard work is key.";
+                } elseif ($position <= 90) {
+                    return "You need to work harder to improve your position.";
+                } elseif ($position <= 100) {
+                    return "Your position is very low. Please work harder.";
+                } else {
+                    return "Much more effort is required in your studies.";
+                }
+            }
+            // Fallback if position is not available
+            return "Your performance this term has been noted. More effort is encouraged for the coming term.";
         }
     }
 }
@@ -217,21 +238,21 @@ if (!function_exists('generateHeadTeacherRemarkUtil')) {
             $aggregate = $performanceData['p4p7_aggregate_points'] ?? 99; // Default to a high aggregate if not set
 
             if ($aggregate >= 4 && $aggregate <= 6) {
-                return "A truly exceptional performance. We are very proud of you.";
+                return "Excellent work done. Keep it up.";
             } elseif ($aggregate >= 7 && $aggregate <= 9) {
-                return "This is a very strong result. Congratulations on your achievement.";
+                return "This is a very good result. Keep it up.";
             } elseif ($aggregate >= 10 && $aggregate <= 12) {
                 return "Well done on this excellent result. Keep working hard.";
             } elseif ($aggregate >= 13 && $aggregate <= 16) {
                 return "A commendable performance. Continue to aim higher and build on this success.";
             } elseif ($aggregate >= 17 && $aggregate <= 24) {
-                return "There is potential here. With consistent effort, you can achieve more.";
+                return "You have the potential to perform better if you concentrate on your studies.";
             } elseif ($aggregate >= 25 && $aggregate <= 29) {
-                return "More effort is required to improve your results. We encourage you to persevere.";
+                return "Put in more effort for better performance.";
             } elseif ($aggregate >= 30 && $aggregate <= 34) {
-                return "Significant improvement is needed. Please focus and work diligently next term.";
+                return "You need to improve in all subjects.";
             } elseif ($aggregate >= 35) { // Covers 35-36 and above (Division U or higher aggregates)
-                return "Your results show a need for serious improvement. Please commit to your studies.";
+                return "You need to improve in all subjects.";
             } else { // Should not be reached if aggregate is always >= 4 for graded students, but as a fallback.
                 $division = $performanceData['p4p7_division'] ?? 'X'; // Use division for X case
                  if ($division === 'X') {
@@ -240,11 +261,33 @@ if (!function_exists('generateHeadTeacherRemarkUtil')) {
                 return "The school encourages you to focus on your studies for better results."; // Generic fallback
             }
         } else { // P1-P3
-            $average = $performanceData['p1p3_average_eot_score'] ?? 0;
-            if ($average >= 85) return "Wonderful job! The school is very proud of you. Keep it up!";
-            if ($average >= 70) return "Very good work! Keep trying hard and aim higher.";
-            if ($average >= 50) return "Good effort. Keep working hard, you can do even better."; // Covers 50-69
-            return "Please try to improve next term. Working hard in class helps a lot."; // Covers below 50
+            $position = $performanceData['p1p3_position_in_class'] ?? 0;
+
+            if ($position > 0) {
+                if ($position <= 10) {
+                    return "Excellent work, Keep it up.";
+                } elseif ($position <= 20) {
+                    return "A very good performance. Keep aiming higher.";
+                } elseif ($position <= 30) {
+                    return "A good performance. Strive for a better position next term.";
+                } elseif ($position <= 40) {
+                    return "A good performance. Keep working hard.";
+                } elseif ($position <= 50) {
+                    return "A good performance. Keep working harder.";
+                } elseif ($position <= 70) {
+                    return "There's still room for improvement, dont relax.";
+                } elseif ($position <= 80) {
+                    return "You need to concentrate on your studies for a better performance.";
+                } elseif ($position <= 90) {
+                    return "You need to concentrate on your studies for a better performance.";
+                } elseif ($position <= 100) {
+                    return "You need to concentrate on your studies for a better performance.";
+                } else {
+                    return "More effort is still needed in all learning areas.";
+                }
+            }
+            // Fallback if position is not available
+            return "The school encourages you to focus on your studies for better results.";
         }
     }
 }
